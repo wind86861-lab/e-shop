@@ -1,0 +1,302 @@
+import { useState, useEffect } from 'react'
+import { useLanguage } from '../context/LanguageContext'
+import { faqsAPI, productsAPI, requestsAPI, uploadAPI } from '../services/api'
+import { Link } from 'react-router-dom'
+import { Heart, Upload, ChevronDown, X, CheckCircle } from 'lucide-react'
+import Header from '../components/Header'
+import Footer from '../components/Footer'
+import product1 from '../image/Top mahsulotlar1.png'
+import product2 from '../image/Top mahsulotlar2.png'
+import product3 from '../image/Top mahsulotlar3.png'
+import product4 from '../image/Top mahsulotlar4.png'
+
+export default function CustomOrder() {
+  const { t, language } = useLanguage()
+  const [openFaq, setOpenFaq] = useState(null)
+  const [faqs, setFaqs] = useState([])
+  const [topProducts, setTopProducts] = useState([])
+
+  useEffect(() => {
+    faqsAPI.getAll({ active: 'true' }).then(res => setFaqs(res.data || [])).catch(() => { })
+    productsAPI.getAll({ active: 'true', limit: 20 }).then(res => {
+      const all = res.data?.products || []
+      const shuffled = all.sort(() => Math.random() - 0.5).slice(0, 4)
+      setTopProducts(shuffled)
+    }).catch(() => { })
+  }, [])
+
+  const [formData, setFormData] = useState({ name: '', phone: '', productName: '', quantity: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [image, setImage] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+
+  const MAX_SIZE_MB = 5
+
+  const handleImageSelect = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setUploadError('')
+    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+      setUploadError(language === 'uz' ? `Rasm hajmi ${MAX_SIZE_MB}MB dan oshmasligi kerak` : language === 'ru' ? `Размер файла не должен превышать ${MAX_SIZE_MB}МБ` : `File size must not exceed ${MAX_SIZE_MB}MB`)
+      return
+    }
+    setImagePreview(URL.createObjectURL(file))
+    setUploading(true)
+    try {
+      const fd = new FormData()
+      fd.append('image', file)
+      const res = await uploadAPI.single(fd)
+      setImage(res.data.url)
+    } catch {
+      setUploadError(language === 'uz' ? 'Yuklash xatosi' : language === 'ru' ? 'Ошибка загрузки' : 'Upload failed')
+      setImagePreview(null)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const removeImage = () => {
+    setImage(null)
+    setImagePreview(null)
+    setUploadError('')
+  }
+
+
+  const benefits = [
+    {
+      icon: '📦',
+      title: { uz: 'Tezkor Yetqazib IMPORT', ru: 'Быстрая доставка ИМПОРТ', en: 'Fast IMPORT Delivery' },
+      desc: { uz: 'Bizdan buyurtma qilgan mahsulotlaringizni tez orada yetqazib beramiz', ru: 'Мы быстро доставим заказанные товары', en: 'We will deliver your ordered products quickly' }
+    },
+    {
+      icon: '🤝',
+      title: { uz: 'Maxsus Buyurtma Xizmati', ru: 'Услуга специального заказа', en: 'Custom Order Service' },
+      desc: { uz: 'Sizga kerakli mahsulotni topib beramiz va yetqazib beramiz', ru: 'Найдем и доставим нужный товар', en: 'We will find and deliver the product you need' }
+    },
+    {
+      icon: '💰',
+      title: { uz: 'Pr. Qizil Hamkorlik', ru: 'Пр. Красное партнерство', en: 'Pr. Red Partnership' },
+      desc: { uz: 'Hamkorlik qilish uchun maxsus shartlar', ru: 'Специальные условия для партнерства', en: 'Special terms for partnership' }
+    },
+    {
+      icon: '🎯',
+      title: { uz: 'Pr. Qizil Hamkorlik', ru: 'Пр. Красное партнерство', en: 'Pr. Red Partnership' },
+      desc: { uz: 'Professional xizmat va maslahat', ru: 'Профессиональное обслуживание и консультация', en: 'Professional service and consultation' }
+    }
+  ]
+
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Header />
+
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-6 md:py-12">
+        <div className="mb-8 md:mb-12">
+          <p className="text-gray-600 mb-2 text-sm md:text-base">
+            {language === 'uz' && 'O\'zingizga kerak maxsulot topilmadimi?'}
+            {language === 'ru' && 'Не нашли нужный товар?'}
+            {language === 'en' && 'Didn\'t find the product you need?'}
+          </p>
+          <h1 className="text-xl md:text-2xl lg:text-4xl font-bold text-[#1e3d69] uppercase">
+            {language === 'uz' && 'MAXSUS BUYURTMA XIZMATIDAN FOYDALANING'}
+            {language === 'ru' && 'ВОСПОЛЬЗУЙТЕСЬ УСЛУГОЙ СПЕЦИАЛЬНОГО ЗАКАЗА'}
+            {language === 'en' && 'USE THE CUSTOM ORDER SERVICE'}
+          </h1>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 mb-10 md:mb-16">
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={formData.name}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
+              placeholder={language === 'uz' ? 'Ismingiz' : language === 'ru' ? 'Ваше имя' : 'Your name'}
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+            />
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={e => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9+]/g, '') })}
+              pattern="^(\+998[0-9]{9}|[0-9]{9})$"
+              placeholder="+998901234567"
+              title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+            />
+            <input
+              type="text"
+              value={formData.productName}
+              onChange={e => setFormData({ ...formData, productName: e.target.value })}
+              placeholder="* Tovar nomi, Modeli"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+            />
+            <input
+              type="number"
+              min="1"
+              value={formData.quantity}
+              onChange={e => setFormData({ ...formData, quantity: e.target.value })}
+              placeholder="*Mahsulot miqdori"
+              className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+            />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <label className="flex-1 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden hover:border-[#3563e9] transition-colors cursor-pointer relative" style={{ minHeight: '160px' }}>
+              <input type="file" accept="image/*" onChange={handleImageSelect} className="hidden" disabled={uploading} />
+              {imagePreview ? (
+                <div className="relative w-full h-full">
+                  <img src={imagePreview} alt="preview" className="w-full h-48 object-cover" />
+                  {uploading && (
+                    <div className="absolute inset-0 bg-white/70 flex items-center justify-center">
+                      <div className="animate-spin w-8 h-8 border-4 border-[#3563e9] border-t-transparent rounded-full" />
+                    </div>
+                  )}
+                  {!uploading && image && (
+                    <div className="absolute top-2 right-2 flex gap-2">
+                      <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                        <CheckCircle size={12} />
+                        {language === 'uz' ? 'Yuklandi' : language === 'ru' ? 'Загружено' : 'Uploaded'}
+                      </span>
+                    </div>
+                  )}
+                  <button type="button" onClick={(e) => { e.preventDefault(); removeImage() }} className="absolute top-2 left-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600">
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center p-8 h-full">
+                  <Upload size={40} className="text-gray-400 mb-3" />
+                  <p className="text-gray-500 text-center font-medium">
+                    {language === 'uz' ? 'Mahsulot rasmini yuklang' : language === 'ru' ? 'Загрузите фото товара' : 'Upload product image'}
+                  </p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    {language === 'uz' ? `(Ixtiyoriy, max ${MAX_SIZE_MB}MB)` : language === 'ru' ? `(Необязательно, макс. ${MAX_SIZE_MB}МБ)` : `(Optional, max ${MAX_SIZE_MB}MB)`}
+                  </p>
+                </div>
+              )}
+            </label>
+            {uploadError && <p className="text-red-500 text-sm">{uploadError}</p>}
+            {submitted ? (
+              <div className="bg-green-50 border border-green-200 rounded-xl py-4 text-center text-green-700 font-semibold">
+                {language === 'uz' ? 'Buyurtmangiz qabul qilindi!' : language === 'ru' ? 'Заявка принята!' : 'Order received!'}
+              </div>
+            ) : (
+              <button
+                onClick={async () => {
+                  if (!formData.phone) return
+                  setSubmitting(true)
+                  try {
+                    await requestsAPI.create({ name: formData.name, phone: formData.phone, productModel: formData.productName, productQuantity: formData.quantity, type: 'custom-order', page: 'custom-order', image: image || undefined })
+                    setSubmitted(true)
+                    setFormData({ name: '', phone: '', productName: '', quantity: '' })
+                    setImage(null)
+                    setImagePreview(null)
+                  } catch { }
+                  finally { setSubmitting(false) }
+                }}
+                disabled={submitting}
+                className="bg-[#10b981] text-white py-4 rounded-xl font-semibold text-lg hover:bg-[#059669] transition-colors disabled:opacity-60"
+              >
+                {submitting ? '...' : language === 'uz' ? 'Buyurtma berish' : language === 'ru' ? 'Заказать' : 'Order'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="mb-16">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1e3d69] mb-5 md:mb-8 uppercase">
+            {language === 'uz' && 'TAFSIYA QILINADI'}
+            {language === 'ru' && 'РЕКОМЕНДУЕМЫЕ'}
+            {language === 'en' && 'RECOMMENDED'}
+          </h2>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
+            {topProducts.map((product) => (
+              <div key={product._id} className="bg-white border border-gray-200 rounded-xl p-3 md:p-5 hover:shadow-xl transition-all group relative flex flex-col">
+                <div className="bg-gray-50 h-32 sm:h-40 lg:h-48 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                  {product.images?.[0]
+                    ? <img src={product.images[0]} alt={product.name?.[language]} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                    : <Heart size={48} className="text-gray-200" />}
+                </div>
+                <div className="flex-1 flex flex-col">
+                  <h4 className="font-semibold text-gray-900 mb-1 text-xs sm:text-sm md:text-base line-clamp-2">{product.name?.[language] || product.name?.uz}</h4>
+                  <div className="mb-3">
+                    <p className="text-[#3563e9] font-bold text-sm md:text-base">{(product.finalPrice || product.price).toLocaleString()} so'm</p>
+                    {product.hasDiscount && (
+                      <p className="text-xs text-gray-400 line-through">{product.price.toLocaleString()} so'm</p>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-2 mt-auto">
+                    {product.isActive ? (
+                      <Link to={`/catalog/${product._id}`} className="w-full bg-[#3563e9] text-white py-2 rounded-lg font-medium hover:bg-[#2952d1] transition-colors text-xs md:text-sm text-center">
+                        {language === 'uz' ? 'Buyurtma berish' : language === 'ru' ? 'Заказать' : 'Order'}
+                      </Link>
+                    ) : (
+                      <div className="w-full bg-gray-300 text-gray-500 py-2 rounded-lg font-medium text-xs md:text-sm text-center cursor-not-allowed">
+                        {language === 'uz' ? 'Mavjud emas' : language === 'ru' ? 'Недоступно' : 'Unavailable'}
+                      </div>
+                    )}
+                    <Link to={`/catalog/${product._id}`} className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors text-xs md:text-sm text-center">
+                      {language === 'uz' ? 'Batafsil' : language === 'ru' ? 'Подробнее' : 'Details'}
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-16">
+          <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1e3d69] mb-5 md:mb-8 uppercase">
+            {language === 'uz' && 'GLOBAL HAMKORLIK, KAFOLATLANGAN SIFAT VA PROFESSIONAL TAMINOT'}
+            {language === 'ru' && 'ГЛОБАЛЬНОЕ ПАРТНЕРСТВО, ГАРАНТИРОВАННОЕ КАЧЕСТВО И ПРОФЕССИОНАЛЬНЫЕ ПОСТАВКИ'}
+            {language === 'en' && 'GLOBAL PARTNERSHIP, GUARANTEED QUALITY AND PROFESSIONAL SUPPLY'}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="bg-white rounded-xl p-8 shadow-sm">
+                <div className="w-16 h-16 bg-[#3563e9] rounded-full flex items-center justify-center text-3xl mb-4">
+                  {benefit.icon}
+                </div>
+                <h3 className="text-xl font-bold text-[#1e3d69] mb-2">{benefit.title[language]}</h3>
+                <p className="text-gray-600">{benefit.desc[language]}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <h2 className="text-3xl font-bold text-[#1e3d69] mb-8">
+            {language === 'uz' && 'Eng ko\'p beriladigan savollar'}
+            {language === 'ru' && 'Часто задаваемые вопросы'}
+            {language === 'en' && 'Frequently asked questions'}
+          </h2>
+          <div className="space-y-3">
+            {faqs.map((faq) => (
+              <div key={faq._id} className="bg-white rounded-lg overflow-hidden border border-gray-200">
+                <button
+                  onClick={() => setOpenFaq(openFaq === faq._id ? null : faq._id)}
+                  className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
+                >
+                  <span className="font-semibold text-[#1e3d69] text-lg">{faq.question?.[language] || faq.question?.uz}</span>
+                  <ChevronDown
+                    className={`text-gray-400 transition-transform flex-shrink-0 ml-4 ${openFaq === faq._id ? 'rotate-180' : ''}`}
+                    size={24}
+                  />
+                </button>
+                {openFaq === faq._id && (
+                  <div className="px-5 pb-5 text-gray-600 leading-relaxed border-t border-gray-100 pt-4">
+                    {faq.answer?.[language] || faq.answer?.uz}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Footer />
+    </div>
+  )
+}

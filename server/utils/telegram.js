@@ -1,0 +1,67 @@
+const https = require('https');
+
+const sendTelegramMessage = async (text) => {
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  const chatId = process.env.TELEGRAM_CHAT_ID;
+
+  if (!token || !chatId) return;
+
+  const body = JSON.stringify({
+    chat_id: chatId,
+    text,
+    parse_mode: 'HTML',
+  });
+
+  return new Promise((resolve) => {
+    const req = https.request(
+      {
+        hostname: 'api.telegram.org',
+        path: `/bot${token}/sendMessage`,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(body),
+        },
+      },
+      (res) => {
+        res.on('data', () => {});
+        res.on('end', resolve);
+      }
+    );
+    req.on('error', (err) => {
+      console.error('Telegram notification error:', err.message);
+      resolve();
+    });
+    req.write(body);
+    req.end();
+  });
+};
+
+const formatRequestMessage = (request) => {
+  const typeLabels = {
+    consultation: '📋 Konsultatsiya',
+    'custom-order': '🛒 Maxsus buyurtma',
+    calculator: '🔢 Kalkulyator',
+    contact: '📞 Bog\'lanish',
+  };
+
+  const lines = [
+    `🔔 <b>Yangi so'rov!</b>`,
+    ``,
+    `📌 Turi: <b>${typeLabels[request.type] || request.type}</b>`,
+    `👤 Ism: <b>${request.name || '—'}</b>`,
+    `📞 Telefon: <b>${request.phone}</b>`,
+  ];
+
+  if (request.productModel) lines.push(`📦 Mahsulot: <b>${request.productModel}</b>`);
+  if (request.productQuantity) lines.push(`🔢 Miqdor: <b>${request.productQuantity}</b>`);
+  if (request.comment) lines.push(`💬 Izoh: <b>${request.comment}</b>`);
+  if (request.page) lines.push(`🌐 Sahifa: <b>${request.page}</b>`);
+  if (request.image) lines.push(`🖼 Rasm: <a href="${request.image}">Ko'rish</a>`);
+
+  lines.push(``, `🕐 Vaqt: <b>${new Date().toLocaleString('uz-UZ', { timeZone: 'Asia/Tashkent' })}</b>`);
+
+  return lines.join('\n');
+};
+
+module.exports = { sendTelegramMessage, formatRequestMessage };

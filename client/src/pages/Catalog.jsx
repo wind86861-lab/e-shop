@@ -444,29 +444,27 @@ export default function Catalog() {
                 <p className="text-green-600 text-sm mt-1">{language === 'uz' ? 'Tez orada siz bilan bog\'lanamiz.' : language === 'ru' ? 'Скоро свяжемся с вами.' : 'We will contact you soon.'}</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-gray-700 mb-2">*{language === 'uz' ? 'Ismingiz' : language === 'ru' ? 'Ваше имя' : 'Your name'}</label>
-                    <input type="text" value={catOrderForm.name} onChange={e => setCatOrderForm(f => ({ ...f, name: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]" />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">*{language === 'uz' ? 'Telefon nomeringiz' : language === 'ru' ? 'Ваш телефон' : 'Your phone'}</label>
-                    <input type="tel" value={catOrderForm.phone}
-                      onChange={e => setCatOrderForm(f => ({ ...f, phone: e.target.value.replace(/[^0-9+]/g, '') }))}
-                      pattern="^(\+998[0-9]{9}|[0-9]{9})$"
-                      placeholder="+998901234567"
-                      title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
-                      className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]" />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">*{language === 'uz' ? 'Tovar nomi, Modeli' : language === 'ru' ? 'Название товара, Модель' : 'Product name, Model'}</label>
-                    <input type="text" value={catOrderForm.productName} onChange={e => setCatOrderForm(f => ({ ...f, productName: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]" />
-                  </div>
-                  <div>
-                    <label className="block text-gray-700 mb-2">*{language === 'uz' ? 'Mahsulot miqdori' : language === 'ru' ? 'Количество товара' : 'Product quantity'}</label>
-                    <input type="number" min="1" value={catOrderForm.quantity} onChange={e => setCatOrderForm(f => ({ ...f, quantity: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]" />
-                  </div>
+              <div className="flex flex-col gap-4">
+                <div>
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">*{language === 'uz' ? 'Ismingiz' : language === 'ru' ? 'Ваше имя' : 'Your name'}</label>
+                  <input type="text" value={catOrderForm.name} onChange={e => setCatOrderForm(f => ({ ...f, name: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">*{language === 'uz' ? 'Telefon nomeringiz' : language === 'ru' ? 'Ваш телефон' : 'Your phone'}</label>
+                  <input type="tel" value={catOrderForm.phone}
+                    onChange={e => setCatOrderForm(f => ({ ...f, phone: e.target.value.replace(/[^0-9+]/g, '') }))}
+                    pattern="^(\+998[0-9]{9}|[0-9]{9})$"
+                    placeholder="+998901234567"
+                    title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">*{language === 'uz' ? 'Tovar nomi, Modeli' : language === 'ru' ? 'Название товара, Модель' : 'Product name, Model'}</label>
+                  <input type="text" value={catOrderForm.productName} onChange={e => setCatOrderForm(f => ({ ...f, productName: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]" />
+                </div>
+                <div>
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">*{language === 'uz' ? 'Mahsulot miqdori' : language === 'ru' ? 'Количество товара' : 'Product quantity'}</label>
+                  <input type="number" min="1" value={catOrderForm.quantity} onChange={e => setCatOrderForm(f => ({ ...f, quantity: e.target.value }))} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]" />
                 </div>
                 <div className="flex flex-col justify-between gap-4">
                   <div>

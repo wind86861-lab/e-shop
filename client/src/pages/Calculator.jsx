@@ -100,9 +100,9 @@ export default function Calculator() {
 
           <div className="md:col-span-2 bg-white rounded-2xl p-6 md:p-8 shadow-sm">
             <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+              <div className="flex flex-col gap-4 md:gap-6">
                 <div>
-                  <label className="block text-gray-700 mb-2">
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">
                     {language === 'uz' && 'Ismingiz'}
                     {language === 'ru' && 'Ваше имя'}
                     {language === 'en' && 'Your name'}
@@ -111,11 +111,11 @@ export default function Calculator() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 mb-2">
+                  <label className="block text-gray-700 mb-2 text-sm md:text-base">
                     {language === 'uz' && '*Telefon nomeringiz'}
                     {language === 'ru' && '*Ваш телефон'}
                     {language === 'en' && '*Your phone'}
@@ -127,7 +127,7 @@ export default function Calculator() {
                     pattern="^(\+998[0-9]{9}|[0-9]{9})$"
                     placeholder="+998901234567"
                     title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
                     required
                   />
                 </div>

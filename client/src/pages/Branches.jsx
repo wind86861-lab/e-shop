@@ -130,13 +130,13 @@ export default function Branches() {
             {language === 'en' && 'Leave a request to learn more about the company'}
           </p>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={language === 'uz' ? 'Ismingizni kiriting' : language === 'ru' ? 'Введите имя' : 'Enter name'}
-              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
             />
             <input
               type="tel"
@@ -145,17 +145,17 @@ export default function Branches() {
               pattern="^(\+998[0-9]{9}|[0-9]{9})$"
               placeholder="+998901234567"
               title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
-              className="border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
+              className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
             />
             {submitted && (
-              <div className="col-span-2 bg-green-50 border border-green-200 rounded-xl py-3 text-center text-green-700 font-semibold">
+              <div className="bg-green-50 border border-green-200 rounded-xl py-3 text-center text-green-700 font-semibold text-sm md:text-base">
                 {language === 'uz' ? 'Arizangiz qabul qilindi!' : language === 'ru' ? 'Заявка принята!' : 'Request received!'}
               </div>
             )}
             <button
               type="submit"
               disabled={submitting}
-              className="col-span-2 bg-[#10b981] text-white py-4 rounded-xl font-semibold text-lg hover:bg-[#059669] transition-colors disabled:opacity-60"
+              className="w-full bg-[#10b981] text-white py-3 md:py-4 rounded-xl font-semibold text-base md:text-lg hover:bg-[#059669] transition-colors disabled:opacity-60"
             >
               {language === 'uz' && 'Konsultatsiya olish'}
               {language === 'ru' && 'Получить консультацию'}

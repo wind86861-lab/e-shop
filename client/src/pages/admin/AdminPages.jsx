@@ -320,15 +320,25 @@ export default function AdminPages() {
     const items = data.items || []
 
     const addItem = () => {
-      const newItems = [...items, { title: '', subtitle: '' }]
+      const newItems = [...items, { title: { uz: '', ru: '', en: '' }, subtitle: { uz: '', ru: '', en: '' } }]
       updateContent(section, { items: newItems })
     }
     const removeItem = (i) => {
       updateContent(section, { items: items.filter((_, idx) => idx !== i) })
     }
-    const updateItem = (i, field, value) => {
-      const newItems = items.map((item, idx) => idx === i ? { ...item, [field]: value } : item)
+    const updateItemLang = (i, field, lang, value) => {
+      const newItems = items.map((item, idx) => {
+        if (idx !== i) return item
+        const existing = typeof item[field] === 'object' ? item[field] : { uz: item[field] || '', ru: '', en: '' }
+        return { ...item, [field]: { ...existing, [lang]: value } }
+      })
       updateContent(section, { items: newItems })
+    }
+    const getItemLangVal = (item, field, lang) => {
+      const v = item[field]
+      if (!v) return ''
+      if (typeof v === 'object') return v[lang] || ''
+      return lang === 'uz' ? v : ''
     }
 
     return (
@@ -337,12 +347,28 @@ export default function AdminPages() {
         <MultilangInput section={section} field="subtitle" label="Qo'shimcha matn" />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">Afzallik elementlari (doiralar)</label>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+          <div className="space-y-3">
             {items.map((item, i) => (
-              <div key={i} className="bg-gray-50 rounded-xl p-3 border border-gray-200 relative text-center">
-                <button type="button" onClick={() => removeItem(i)} className="absolute top-1 right-1 p-1 hover:bg-red-50 rounded text-red-400"><X size={12} /></button>
-                <input value={item.title || ''} onChange={e => updateItem(i, 'title', e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-sm text-center font-bold mb-1" placeholder="20+" />
-                <input value={item.subtitle || ''} onChange={e => updateItem(i, 'subtitle', e.target.value)} className="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center" placeholder="Yil tajriba" />
+              <div key={i} className="bg-gray-50 rounded-xl p-4 border border-gray-200 relative">
+                <button type="button" onClick={() => removeItem(i)} className="absolute top-2 right-2 p-1.5 hover:bg-red-50 rounded-lg text-red-500"><Trash2 size={14} /></button>
+                <div className="mb-3">
+                  <label className="block text-xs text-gray-500 mb-2">Sarlavha (3 tilda)</label>
+                  {['uz', 'ru', 'en'].map(lang => (
+                    <div key={lang} className="flex items-center gap-2 mb-1">
+                      <span className="text-xs text-gray-400 w-6 uppercase font-medium">{lang}</span>
+                      <input value={getItemLangVal(item, 'title', lang)} onChange={e => updateItemLang(i, 'title', lang, e.target.value)} className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm" placeholder={lang === 'uz' ? '20+' : lang === 'ru' ? '20+' : '20+'} />
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <label className="block text-xs text-gray-500 mb-2">Tavsif (3 tilda)</label>
+                  {['uz', 'ru', 'en'].map(lang => (
+                    <div key={lang} className="flex items-center gap-2 mb-1">
+                      <span className="text-xs text-gray-400 w-6 uppercase font-medium">{lang}</span>
+                      <input value={getItemLangVal(item, 'subtitle', lang)} onChange={e => updateItemLang(i, 'subtitle', lang, e.target.value)} className="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 text-sm" placeholder={lang === 'uz' ? 'Yil tajriba' : lang === 'ru' ? 'Лет опыта' : 'Years experience'} />
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>

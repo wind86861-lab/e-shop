@@ -7,7 +7,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
 
-dotenv.config();
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const isProd = process.env.NODE_ENV === 'production';
 

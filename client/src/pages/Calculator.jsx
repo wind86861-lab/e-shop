@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useLanguage } from '../context/LanguageContext'
 import { faqsAPI, branchesAPI, requestsAPI, teamAPI } from '../services/api'
 import { ImageIcon, MapPin, Phone, ChevronRight } from 'lucide-react'

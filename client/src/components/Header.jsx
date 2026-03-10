@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { Phone, Search, Facebook, Instagram, Youtube, Globe, Menu, X, ShoppingCart } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { useCart } from '../context/CartContext'
@@ -10,6 +10,7 @@ export default function Header() {
   const { toggleLanguage, t } = useLanguage()
   const { totalItems } = useCart()
   const navigate = useNavigate()
+  const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [settings, setSettings] = useState({})
   const [searchQuery, setSearchQuery] = useState('')
@@ -90,28 +91,33 @@ export default function Header() {
 
       <nav className="bg-[#1e3d69]">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
-          <ul className="hidden md:flex items-center gap-3 lg:gap-8 text-white overflow-x-auto">
-            <li>
-              <Link to="/" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.home}</Link>
-            </li>
-            <li>
-              <Link to="/catalog" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.catalog}</Link>
-            </li>
-            <li>
-              <Link to="/calculator" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.calculator}</Link>
-            </li>
-            <li>
-              <Link to="/custom-order" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.customOrder}</Link>
-            </li>
-            <li>
-              <Link to="/branches" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.branches}</Link>
-            </li>
-            <li>
-              <Link to="/blog" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.blog}</Link>
-            </li>
-            <li>
-              <Link to="/about" className="block py-3 md:py-4 hover:text-[#42ade2] transition-colors font-medium text-base lg:text-lg whitespace-nowrap">{t.nav.about}</Link>
-            </li>
+          <ul className="hidden md:flex items-center justify-between w-full text-white">
+            {[
+              { to: '/', label: t.nav.home, exact: true },
+              { to: '/catalog', label: t.nav.catalog },
+              { to: '/calculator', label: t.nav.calculator },
+              { to: '/custom-order', label: t.nav.customOrder },
+              { to: '/branches', label: t.nav.branches },
+              { to: '/blog', label: t.nav.blog },
+              { to: '/about', label: t.nav.about },
+            ].map(({ to, label, exact }) => {
+              const isActive = exact
+                ? location.pathname === to
+                : location.pathname.startsWith(to)
+              return (
+                <li key={to} className="flex-1 text-center">
+                  <Link
+                    to={to}
+                    className={`relative block py-4 font-medium text-base lg:text-lg whitespace-nowrap transition-all duration-200 group ${isActive ? 'text-[#42ade2]' : 'text-white hover:text-[#42ade2]'
+                      }`}
+                  >
+                    {label}
+                    <span className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#42ade2] rounded-t transition-transform duration-200 origin-center ${isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
+                      }`} />
+                  </Link>
+                </li>
+              )
+            })}
           </ul>
         </div>
       </nav>

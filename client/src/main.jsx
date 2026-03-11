@@ -9,18 +9,27 @@ import 'aos/dist/aos.css'
 
 function Root() {
   useEffect(() => {
-    AOS.init({
-      duration: 1000,
-      once: false,
-      offset: 120,
-      easing: 'ease-out-cubic',
-      delay: 50,
-      anchorPlacement: 'top-bottom',
-    })
+    // Disable AOS on admin pages to prevent input issues
+    const isAdminPage = window.location.pathname.startsWith('/admin')
 
-    // Refresh AOS on route changes
+    if (!isAdminPage) {
+      AOS.init({
+        duration: 1000,
+        once: true, // Changed to true to prevent re-triggering
+        offset: 120,
+        easing: 'ease-out-cubic',
+        delay: 50,
+        anchorPlacement: 'top-bottom',
+        disable: 'mobile', // Disable on mobile for better performance
+      })
+    }
+
+    // Refresh AOS on route changes (only for non-admin pages)
     const handleRouteChange = () => {
-      setTimeout(() => AOS.refresh(), 100)
+      const isAdmin = window.location.pathname.startsWith('/admin')
+      if (!isAdmin) {
+        setTimeout(() => AOS.refresh(), 100)
+      }
     }
     window.addEventListener('popstate', handleRouteChange)
     return () => window.removeEventListener('popstate', handleRouteChange)

@@ -89,8 +89,23 @@ app.get('/api/health', (req, res) => {
 // Serve built React client in production
 if (isProd) {
   const clientBuild = path.join(__dirname, '..', 'client', 'dist');
-  app.use(express.static(clientBuild));
+  app.use(express.static(clientBuild, {
+    maxAge: '1y',
+    etag: true,
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.css')) {
+        res.setHeader('Content-Type', 'text/css');
+      } else if (filePath.endsWith('.js')) {
+        res.setHeader('Content-Type', 'application/javascript');
+      }
+    }
+  }));
+  // Catch-all route - only for non-file requests
   app.get('*', (req, res) => {
+    // Don't serve index.html for asset requests
+    if (req.path.includes('.')) {
+      return res.status(404).send('File not found');
+    }
     res.sendFile(path.join(clientBuild, 'index.html'));
   });
 }

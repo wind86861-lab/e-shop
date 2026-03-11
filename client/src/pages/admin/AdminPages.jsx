@@ -113,39 +113,50 @@ export default function AdminPages() {
     finally { setSaving(prev => ({ ...prev, [sKey]: false })) }
   }
 
-  const MultilangInput = memo(({ section, field, label }) => (
+  const MultilangInput = memo(({ section, field, label, values }) => (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
       <div className="space-y-2">
-        {['uz', 'ru', 'en'].map(lang => (
-          <div key={lang} className="flex items-center gap-2">
-            <span className="text-xs text-gray-400 w-6 uppercase font-medium">{lang}</span>
-            <input
-              value={contentMap[section]?.[field]?.[lang] || ''}
-              onChange={e => updateField(section, field, lang, e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        ))}
+        {['uz', 'ru', 'en'].map(lang => {
+          const inputId = `${section}-${field}-${lang}`
+          return (
+            <div key={lang} className="flex items-center gap-2">
+              <label htmlFor={inputId} className="text-xs text-gray-400 w-6 uppercase font-medium">{lang}</label>
+              <input
+                id={inputId}
+                name={inputId}
+                type="text"
+                value={values?.[lang] || ''}
+                onChange={e => updateField(section, field, lang, e.target.value)}
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          )
+        })}
       </div>
     </div>
   ))
 
-  const MultilangTextarea = memo(({ section, field, label }) => (
+  const MultilangTextarea = memo(({ section, field, label, values }) => (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
       <div className="space-y-2">
-        {['uz', 'ru', 'en'].map(lang => (
-          <div key={lang} className="flex items-start gap-2">
-            <span className="text-xs text-gray-400 w-6 uppercase font-medium mt-2">{lang}</span>
-            <textarea
-              value={contentMap[section]?.[field]?.[lang] || ''}
-              onChange={e => updateField(section, field, lang, e.target.value)}
-              className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              rows={3}
-            />
-          </div>
-        ))}
+        {['uz', 'ru', 'en'].map(lang => {
+          const textareaId = `${section}-${field}-${lang}`
+          return (
+            <div key={lang} className="flex items-start gap-2">
+              <label htmlFor={textareaId} className="text-xs text-gray-400 w-6 uppercase font-medium mt-2">{lang}</label>
+              <textarea
+                id={textareaId}
+                name={textareaId}
+                value={values?.[lang] || ''}
+                onChange={e => updateField(section, field, lang, e.target.value)}
+                className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                rows={3}
+              />
+            </div>
+          )
+        })}
       </div>
     </div>
   ))
@@ -221,10 +232,10 @@ export default function AdminPages() {
     return (
       <div className="space-y-4">
         <ImageArrayUploader section={section} field="bgImages" label="Fon rasmlari (slayder)" />
-        <MultilangInput section={section} field="line1" label="1-qator (gradient matn)" />
-        <MultilangInput section={section} field="line2" label="2-qator (katta oq matn)" />
-        <MultilangInput section={section} field="line3" label="3-qator (ko'k matn)" />
-        <MultilangInput section={section} field="buttonText" label="Tugma matni" />
+        <MultilangInput section={section} field="line1" label="1-qator (gradient matn)" values={data.line1} />
+        <MultilangInput section={section} field="line2" label="2-qator (katta oq matn)" values={data.line2} />
+        <MultilangInput section={section} field="line3" label="3-qator (ko'k matn)" values={data.line3} />
+        <MultilangInput section={section} field="buttonText" label="Tugma matni" values={data.buttonText} />
         <SaveButton section={section} />
       </div>
     )
@@ -263,8 +274,8 @@ export default function AdminPages() {
 
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi (1-qator)" />
-        <MultilangInput section={section} field="subtitle" label="Bo'lim sarlavhasi (2-qator)" />
+        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi (1-qator)" values={data.title} />
+        <MultilangInput section={section} field="subtitle" label="Bo'lim sarlavhasi (2-qator)" values={data.subtitle} />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">Xususiyat kartalari</label>
           <div className="space-y-4">
@@ -349,8 +360,8 @@ export default function AdminPages() {
 
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Sarlavha" />
-        <MultilangInput section={section} field="subtitle" label="Qo'shimcha matn" />
+        <MultilangInput section={section} field="title" label="Sarlavha" values={data.title} />
+        <MultilangInput section={section} field="subtitle" label="Qo'shimcha matn" values={data.subtitle} />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">{itemLabel}lar ({items.length} ta)</label>
           <div className="space-y-3">
@@ -404,11 +415,12 @@ export default function AdminPages() {
 
   const renderShowcaseSection = () => {
     const section = 'showcase'
+    const data = contentMap[section] || {}
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Sarlavha (1-qator)" />
-        <MultilangInput section={section} field="subtitle" label="Sarlavha (2-qator)" />
-        <MultilangTextarea section={section} field="description" label="Tavsif matni" />
+        <MultilangInput section={section} field="title" label="Sarlavha (1-qator)" values={data.title} />
+        <MultilangInput section={section} field="subtitle" label="Sarlavha (2-qator)" values={data.subtitle} />
+        <MultilangTextarea section={section} field="description" label="Tavsif matni" values={data.description} />
         <ImageArrayUploader section={section} field="images" label="Mahsulot rasmlari (slayder)" />
         <SaveButton section={section} />
       </div>
@@ -417,9 +429,10 @@ export default function AdminPages() {
 
   const renderTopProductsSection = () => {
     const section = 'topProducts'
+    const data = contentMap[section] || {}
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" />
+        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" values={data.title} />
         <p className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
           💡 Bu bo'limda "Taniqli" (Featured) deb belgilangan mahsulotlar avtomatik ko'rsatiladi.
           Mahsulotlarni "Taniqli" qilish uchun <strong>Mahsulotlar</strong> sahifasidagi yulduzcha belgisini bosing.
@@ -431,9 +444,10 @@ export default function AdminPages() {
 
   const renderBranchesSection = () => {
     const section = 'branches'
+    const data = contentMap[section] || {}
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" />
+        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" values={data.title} />
         <p className="text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
           💡 Bosh sahifada ko'rsatiladigan filiallarni tanlash uchun <strong>Filiallar</strong> sahifasida
           "Bosh sahifada ko'rsatish" tugmasini yoqing.
@@ -445,11 +459,12 @@ export default function AdminPages() {
 
   const renderConsultationSection = () => {
     const section = 'consultation'
+    const data = contentMap[section] || {}
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Sarlavha (1-qator)" />
-        <MultilangInput section={section} field="subtitle" label="Sarlavha (2-qator)" />
-        <MultilangInput section={section} field="buttonText" label="Tugma matni" />
+        <MultilangInput section={section} field="title" label="Sarlavha (1-qator)" values={data.title} />
+        <MultilangInput section={section} field="subtitle" label="Sarlavha (2-qator)" values={data.subtitle} />
+        <MultilangInput section={section} field="buttonText" label="Tugma matni" values={data.buttonText} />
         <SaveButton section={section} />
       </div>
     )
@@ -491,7 +506,7 @@ export default function AdminPages() {
 
     return (
       <div className="space-y-4">
-        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" />
+        <MultilangInput section={section} field="title" label="Bo'lim sarlavhasi" values={data.title} />
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-3">Hamkorlar ({items.length} ta)</label>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">

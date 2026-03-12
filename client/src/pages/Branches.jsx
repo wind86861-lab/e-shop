@@ -5,6 +5,33 @@ import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { branchesAPI, requestsAPI } from '../services/api'
 
+const getBranchEmbedUrl = (branch, language) => {
+  const rawUrl = branch.mapUrl?.trim()
+  const fallbackQuery = branch.fullAddress || branch.address?.[language] || branch.address?.uz || branch.title?.[language] || branch.title?.uz || ''
+
+  if (rawUrl) {
+    const lowerUrl = rawUrl.toLowerCase()
+
+    if (lowerUrl.includes('/maps/embed') || lowerUrl.includes('output=embed')) {
+      return rawUrl
+    }
+
+    if (lowerUrl.includes('google.com/maps') || lowerUrl.includes('maps.google.com')) {
+      try {
+        const parsedUrl = new URL(rawUrl)
+        const query = parsedUrl.searchParams.get('q') || parsedUrl.searchParams.get('query') || fallbackQuery
+        if (query) {
+          return `https://www.google.com/maps?q=${encodeURIComponent(query)}&output=embed`
+        }
+      } catch {
+      }
+    }
+  }
+
+  if (!fallbackQuery) return ''
+  return `https://www.google.com/maps?q=${encodeURIComponent(fallbackQuery)}&output=embed`
+}
+
 export default function Branches() {
   const { language } = useLanguage()
   const [branches, setBranches] = useState([])
@@ -54,77 +81,90 @@ export default function Branches() {
         <div className="space-y-10 md:space-y-16">
           {branches.map((branch) => (
             <div key={branch._id} id={`branch-${branch._id}`} className="space-y-4 md:space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div className="bg-gray-100 rounded-2xl h-[220px] md:h-[350px] overflow-hidden">
-                  {branch.image
-                    ? <img src={branch.image} alt={branch.title?.[language]} className="w-full h-full object-cover" />
-                    : <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-32 h-32 bg-white/50 rounded-lg"></div>
-                    </div>
-                  }
-                </div>
+              {(() => {
+                const embedUrl = getBranchEmbedUrl(branch, language)
+                return (
+                  <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                      <div className="bg-gray-100 rounded-2xl h-[220px] md:h-[350px] overflow-hidden">
+                        {branch.image
+                          ? <img src={branch.image} alt={branch.title?.[language]} className="w-full h-full object-cover" />
+                          : <div className="w-full h-full flex items-center justify-center">
+                            <div className="w-32 h-32 bg-white/50 rounded-lg"></div>
+                          </div>
+                        }
+                      </div>
 
-                <div className="space-y-4">
-                  <h2 className="text-lg md:text-2xl font-bold text-[#1e3d69]">{branch.title[language]}</h2>
-                  <div className="space-y-2">
-                    <p className="text-lg font-semibold text-gray-900">{branch.company}</p>
-                    {branch.inn && <p className="text-gray-600">{branch.inn}</p>}
-                  </div>
+                      <div className="space-y-4">
+                        <h2 className="text-lg md:text-2xl font-bold text-[#1e3d69]">{branch.title[language]}</h2>
+                        <div className="space-y-2">
+                          <p className="text-lg font-semibold text-gray-900">{branch.company}</p>
+                          {branch.inn && <p className="text-gray-600">{branch.inn}</p>}
+                        </div>
 
-                  <div className="space-y-1">
-                    <p className="font-semibold text-gray-700">
-                      {language === 'uz' && 'Direktor:'}
-                      {language === 'ru' && 'Директор:'}
-                      {language === 'en' && 'Director:'}
-                    </p>
-                    <p className="text-gray-900">{branch.director[language]}</p>
-                    <p className="text-sm text-gray-600">
-                      {branch.founded} {language === 'uz' ? 'yidan beri faoliyat yuritmoqda' : language === 'ru' ? 'года ведет деятельность' : 'year of operation'}
-                    </p>
-                  </div>
+                        <div className="space-y-1">
+                          <p className="font-semibold text-gray-700">
+                            {language === 'uz' && 'Direktor:'}
+                            {language === 'ru' && 'Директор:'}
+                            {language === 'en' && 'Director:'}
+                          </p>
+                          <p className="text-gray-900">{branch.director[language]}</p>
+                          <p className="text-sm text-gray-600">
+                            {branch.founded} {language === 'uz' ? 'yidan beri faoliyat yuritmoqda' : language === 'ru' ? 'года ведет деятельность' : 'year of operation'}
+                          </p>
+                        </div>
 
-                  <div className="space-y-2">
-                    <div className="flex items-start gap-2">
-                      <MapPin size={18} className="text-[#3563e9] mt-1 shrink-0" />
-                      <div>
-                        <p className="font-semibold text-gray-700">
-                          {language === 'uz' && 'Aloqa uchun:'}
-                          {language === 'ru' && 'Для связи:'}
-                          {language === 'en' && 'Contact:'}
-                        </p>
-                        <p className="text-gray-900">{branch.address[language]}</p>
+                        <div className="space-y-2">
+                          <div className="flex items-start gap-2">
+                            <MapPin size={18} className="text-[#3563e9] mt-1 shrink-0" />
+                            <div>
+                              <p className="font-semibold text-gray-700">
+                                {language === 'uz' && 'Aloqa uchun:'}
+                                {language === 'ru' && 'Для связи:'}
+                                {language === 'en' && 'Contact:'}
+                              </p>
+                              <p className="text-gray-900">{branch.address[language]}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-start gap-2">
+                            <Phone size={18} className="text-[#10b981] mt-1 shrink-0" />
+                            <div className="space-y-1">
+                              {branch.phones.map((phone, idx) => (
+                                <p key={idx} className="text-gray-900">{phone}</p>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-start gap-2">
-                      <Phone size={18} className="text-[#10b981] mt-1 shrink-0" />
-                      <div className="space-y-1">
-                        {branch.phones.map((phone, idx) => (
-                          <p key={idx} className="text-gray-900">{phone}</p>
-                        ))}
+                    <div className="space-y-3">
+                      <div className="w-full h-[300px] bg-gray-200 rounded-xl overflow-hidden">
+                        {embedUrl ? (
+                          <iframe
+                            src={embedUrl}
+                            width="100%"
+                            height="100%"
+                            style={{ border: 0 }}
+                            allowFullScreen=""
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                          ></iframe>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-sm text-gray-500 px-6 text-center">
+                            {language === 'uz' ? 'Xarita manzili topilmadi' : language === 'ru' ? 'Адрес карты не найден' : 'Map address not found'}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex items-start gap-2 text-sm text-gray-600">
+                        <MapPin size={16} className="mt-0.5 shrink-0" />
+                        <p>{branch.fullAddress}</p>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="w-full h-[300px] bg-gray-200 rounded-xl overflow-hidden">
-                  <iframe
-                    src={branch.mapUrl}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                </div>
-                <div className="flex items-start gap-2 text-sm text-gray-600">
-                  <MapPin size={16} className="mt-0.5 shrink-0" />
-                  <p>{branch.fullAddress}</p>
-                </div>
-              </div>
+                  </>
+                )
+              })()}
             </div>
           ))}
         </div>

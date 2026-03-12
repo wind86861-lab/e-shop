@@ -171,7 +171,7 @@ export default function Home() {
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 -rotate-12 scale-125 opacity-90">
                     {[...Array(12)].map((_, i) => (
-                      <span key={i} className="text-white/15 text-sm md:text-base font-bold tracking-wider select-none whitespace-nowrap">
+                      <span key={i} className="text-[#3563e9]/35 text-sm md:text-base font-bold tracking-wider select-none whitespace-nowrap">
                         PNEUMAX
                       </span>
                     ))}

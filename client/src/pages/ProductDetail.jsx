@@ -73,7 +73,7 @@ export default function ProductDetail() {
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-5 -rotate-12 scale-125 opacity-90">
                   {[...Array(16)].map((_, i) => (
-                    <span key={i} className="text-white/15 text-base md:text-xl font-bold tracking-wider select-none whitespace-nowrap">
+                    <span key={i} className="text-[#2952d1]/35 text-base md:text-xl font-bold tracking-wider select-none whitespace-nowrap">
                       PNEUMAX
                     </span>
                   ))}
@@ -193,9 +193,9 @@ export default function ProductDetail() {
                     ? <img src={sim.images[0]} alt={sim.name?.[language]} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                     : <Package size={48} className="text-gray-200" />}
                   <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                    <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 -rotate-12 scale-125 opacity-90">
-                      {[...Array(12)].map((_, i) => (
-                        <span key={i} className="text-white/15 text-sm md:text-base font-bold tracking-wider select-none whitespace-nowrap">
+                    <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-5 -rotate-12 scale-125 opacity-90">
+                      {[...Array(16)].map((_, i) => (
+                        <span key={i} className="text-[#3563e9]/35 text-base md:text-xl font-bold tracking-wider select-none whitespace-nowrap">
                           PNEUMAX
                         </span>
                       ))}

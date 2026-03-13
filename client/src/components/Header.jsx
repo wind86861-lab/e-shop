@@ -125,6 +125,25 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-[#1e3d69] border-t border-white/10">
           <div className="px-4 py-2">
+            {/* Search bar */}
+            <div className="flex items-center gap-2 py-3 border-b border-white/10">
+              <Search className="text-white" size={18} />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && searchQuery.trim()) {
+                    navigate(`/catalog?search=${encodeURIComponent(searchQuery.trim())}`)
+                    setSearchQuery('')
+                    setMobileMenuOpen(false)
+                  }
+                }}
+                placeholder={t.header.search}
+                className="flex-1 bg-transparent border-b border-white/30 pb-1 text-white placeholder:text-white/60 focus:outline-none text-sm"
+              />
+            </div>
+            {/* Navigation links */}
             <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.home}</Link>
             <Link to="/catalog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.catalog}</Link>
             <Link to="/calculator" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.calculator}</Link>
@@ -132,6 +151,39 @@ export default function Header() {
             <Link to="/branches" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.branches}</Link>
             <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.blog}</Link>
             <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.about}</Link>
+            {/* Cart and phone */}
+            <div className="flex items-center justify-between py-3 border-b border-white/10">
+              <Link
+                to="/cart"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2 text-white hover:text-[#42ade2] transition-colors font-medium"
+              >
+                <ShoppingCart size={20} />
+                <span>{t.nav.cart || 'Savat'}</span>
+                {totalItems > 0 && (
+                  <span className="bg-[#42ade2] text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {totalItems > 99 ? '99+' : totalItems}
+                  </span>
+                )}
+              </Link>
+              <a href={`tel:${settings.phone1 || t.header.phone}`} className="flex items-center gap-2 text-white hover:text-[#42ade2] transition-colors font-medium">
+                <Phone size={20} />
+                <span className="text-sm">{settings.phone1 || t.header.phone}</span>
+              </a>
+            </div>
+            {/* Social links */}
+            <div className="flex items-center justify-center gap-4 py-3 border-b border-white/10">
+              <a href="#" className="text-white hover:text-[#42ade2] transition-colors">
+                <Facebook size={20} />
+              </a>
+              <a href="#" className="text-white hover:text-[#42ade2] transition-colors">
+                <Instagram size={20} />
+              </a>
+              <a href="#" className="text-white hover:text-[#42ade2] transition-colors">
+                <Youtube size={20} />
+              </a>
+            </div>
+            {/* Language toggle */}
             <button
               onClick={toggleLanguage}
               className="w-full flex items-center gap-2 py-3 text-white hover:text-[#42ade2] transition-colors font-medium"

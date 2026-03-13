@@ -1,0 +1,7 @@
+# Default robots.txt for pneumax.uz
+User-agent: *
+Allow: /
+
+# Block indexing if accessed via wrong domain
+# This will be overridden by server-side logic
+Sitemap: https://www.pneumax.uz/sitemap.xml

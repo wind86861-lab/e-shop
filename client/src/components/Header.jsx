@@ -24,7 +24,7 @@ export default function Header() {
       <div className="bg-[#fafafa] border-b border-gray-200">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-3 md:py-4">
           <div className="flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-2 md:gap-3">
+            <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2 md:gap-3">
               <img src={settings.logoImage || logo} alt="PneuMax Logo" className="h-[50px] sm:h-[60px] md:h-[70px] lg:h-[80px] w-auto" />
               <span className="text-[#1e3d69] font-bold text-lg sm:text-xl md:text-2xl lg:text-3xl">{settings.logoText || 'PNEUMAX'}</span>
             </Link>
@@ -69,7 +69,7 @@ export default function Header() {
                 <Globe size={14} className="text-[#1e3d69] md:w-4 md:h-4" />
                 <span className="text-[#1e3d69] font-medium text-xs md:text-sm">{t.header.language}</span>
               </button>
-              <Link to="/cart" className="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
+              <Link to="/cart" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="relative flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors">
                 <ShoppingCart size={22} className="text-[#1e3d69]" />
                 {totalItems > 0 && (
                   <span className="absolute -top-1 -right-1 bg-[#3563e9] text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
@@ -144,18 +144,18 @@ export default function Header() {
               />
             </div>
             {/* Navigation links */}
-            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.home}</Link>
-            <Link to="/catalog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.catalog}</Link>
-            <Link to="/calculator" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.calculator}</Link>
-            <Link to="/custom-order" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.customOrder}</Link>
-            <Link to="/branches" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.branches}</Link>
-            <Link to="/blog" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.blog}</Link>
-            <Link to="/about" onClick={() => setMobileMenuOpen(false)} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.about}</Link>
+            <Link to="/" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.home}</Link>
+            <Link to="/catalog" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.catalog}</Link>
+            <Link to="/calculator" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.calculator}</Link>
+            <Link to="/custom-order" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.customOrder}</Link>
+            <Link to="/branches" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.branches}</Link>
+            <Link to="/blog" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.blog}</Link>
+            <Link to="/about" onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block py-3 text-white hover:text-[#42ade2] transition-colors font-medium border-b border-white/10">{t.nav.about}</Link>
             {/* Cart and phone */}
             <div className="flex items-center justify-between py-3 border-b border-white/10">
               <Link
                 to="/cart"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => { setMobileMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className="flex items-center gap-2 text-white hover:text-[#42ade2] transition-colors font-medium"
               >
                 <ShoppingCart size={20} />

@@ -80,7 +80,7 @@ export default function Cart() {
               <button onClick={() => setSubmitted(false)} className="px-6 py-3 bg-[#3563e9] text-white rounded-xl font-semibold hover:bg-[#2952d1] transition-colors">
                 {t.newOrder}
               </button>
-              <Link to="/catalog" className="px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors text-center">
+              <Link to="/catalog" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="px-6 py-3 border border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors text-center">
                 {t.catalog}
               </Link>
             </div>
@@ -99,7 +99,7 @@ export default function Cart() {
                 <Package size={72} className="text-gray-200 mx-auto mb-4" />
                 <h2 className="text-xl font-semibold text-gray-700 mb-2">{t.empty}</h2>
                 <p className="text-gray-400 mb-8">{t.emptyDesc}</p>
-                <Link to="/catalog" className="inline-block bg-[#3563e9] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2952d1] transition-colors">
+                <Link to="/catalog" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-block bg-[#3563e9] text-white px-8 py-3 rounded-xl font-semibold hover:bg-[#2952d1] transition-colors">
                   {t.catalog}
                 </Link>
               </div>

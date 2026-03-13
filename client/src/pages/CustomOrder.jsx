@@ -275,7 +275,7 @@ export default function CustomOrder() {
                   </div>
                   <div className="flex flex-col gap-2 mt-auto">
                     {product.isActive ? (
-                      <Link to={`/catalog/${product._id}`} className="w-full bg-[#3563e9] text-white py-2 rounded-lg font-medium hover:bg-[#2952d1] transition-colors text-xs md:text-sm text-center">
+                      <Link to={`/catalog/${product._id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="w-full bg-[#3563e9] text-white py-2 rounded-lg font-medium hover:bg-[#2952d1] transition-colors text-xs md:text-sm text-center">
                         {language === 'uz' ? 'Buyurtma berish' : language === 'ru' ? 'Заказать' : 'Order'}
                       </Link>
                     ) : (
@@ -283,7 +283,7 @@ export default function CustomOrder() {
                         {language === 'uz' ? 'Mavjud emas' : language === 'ru' ? 'Недоступно' : 'Unavailable'}
                       </div>
                     )}
-                    <Link to={`/catalog/${product._id}`} className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors text-xs md:text-sm text-center">
+                    <Link to={`/catalog/${product._id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="w-full bg-white border border-gray-300 text-gray-700 py-2 rounded-lg font-medium hover:bg-gray-50 transition-colors text-xs md:text-sm text-center">
                       {language === 'uz' ? 'Batafsil' : language === 'ru' ? 'Подробнее' : 'Details'}
                     </Link>
                   </div>

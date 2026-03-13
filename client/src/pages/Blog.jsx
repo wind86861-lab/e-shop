@@ -36,7 +36,7 @@ export default function Blog() {
         {loading && <div className="text-center py-12 text-gray-400">Yuklanmoqda...</div>}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {posts.map((post) => (
-            <Link key={post._id} to={`/blog/${post._id}`}>
+            <Link key={post._id} to={`/blog/${post._id}`} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
               <article className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all group">
                 <div className="h-48 bg-gradient-to-br from-[#1e3d69] to-[#3563e9]"></div>
                 <div className="p-6">

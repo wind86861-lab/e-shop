@@ -60,125 +60,129 @@ export default function Calculator() {
         </div>
       </div>
 
-      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-6 md:py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-10 md:mb-16">
-          <div className="bg-white rounded-2xl p-8 shadow-sm">
-            <div className="flex flex-col items-center text-center">
-              <div className="w-32 h-32 rounded-full mb-4 overflow-hidden bg-gray-100 flex items-center justify-center">
-                {expert?.image
-                  ? <img src={expert.image} alt={expert.name} className="w-full h-full object-cover" />
-                  : <div className="w-full h-full bg-gradient-to-br from-[#1e3d69] to-[#3563e9] flex items-center justify-center text-white text-4xl font-bold">
-                    {expert ? expert.name.charAt(0) : <ImageIcon size={40} className="text-white/60" />}
-                  </div>
-                }
-              </div>
-              <h3 className="text-xl font-bold text-[#1e3d69] mb-1">
-                {expert?.name || (language === 'uz' ? 'Ekspert' : language === 'ru' ? '\u042d\u043a\u0441\u043f\u0435\u0440\u0442' : 'Expert')}
-              </h3>
-              <p className="text-sm text-gray-500 mb-6">
-                {expert ? (expert.title?.[language] || expert.title?.uz || expert.title?.ru || 'Expert') : (language === 'uz' ? 'Ekspert' : language === 'ru' ? '\u042d\u043a\u0441\u043f\u0435\u0440\u0442' : 'Expert')}
-              </p>
-              <div className="text-sm text-gray-600 space-y-2">
-                {expert ? (
-                  <p>{expert.description?.[language] || expert.description?.uz || expert.description?.ru}</p>
-                ) : (
-                  <>
-                    <p>
-                      {language === 'uz' && 'Uskuna va ehtiyot qismlar narxini hamda yetkazib berish xarajatlarini hisoblab beraman.'}
-                      {language === 'ru' && '\u0420\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u044e \u0441\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c \u043e\u0431\u043e\u0440\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u0437\u0430\u043f\u0447\u0430\u0441\u0442\u0435\u0439.'}
-                      {language === 'en' && 'I will calculate the cost of equipment and spare parts, as well as delivery costs.'}
-                    </p>
-                    <p>
-                      {language === 'uz' && 'Sizni qaysi turdagi ehtiyot qismi qiziqtiryapti?'}
-                      {language === 'ru' && '\u041a\u0430\u043a\u043e\u0439 \u0442\u0438\u043f \u0437\u0430\u043f\u0447\u0430\u0441\u0442\u0435\u0439 \u0432\u0430\u0441 \u0438\u043d\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442?'}
-                      {language === 'en' && 'What type of spare parts are you interested in?'}
-                    </p>
-                  </>
-                )}
+      <div className="w-full bg-[#EFF3FD] py-6 md:py-12">
+        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div className="bg-white rounded-2xl p-8 shadow-sm">
+              <div className="flex flex-col items-center text-center">
+                <div className="w-32 h-32 rounded-full mb-4 overflow-hidden bg-gray-100 flex items-center justify-center">
+                  {expert?.image
+                    ? <img src={expert.image} alt={expert.name} className="w-full h-full object-cover" />
+                    : <div className="w-full h-full bg-gradient-to-br from-[#1e3d69] to-[#3563e9] flex items-center justify-center text-white text-4xl font-bold">
+                      {expert ? expert.name.charAt(0) : <ImageIcon size={40} className="text-white/60" />}
+                    </div>
+                  }
+                </div>
+                <h3 className="text-xl font-bold text-[#1e3d69] mb-1">
+                  {expert?.name || (language === 'uz' ? 'Ekspert' : language === 'ru' ? '\u042d\u043a\u0441\u043f\u0435\u0440\u0442' : 'Expert')}
+                </h3>
+                <p className="text-sm text-gray-500 mb-6">
+                  {expert ? (expert.title?.[language] || expert.title?.uz || expert.title?.ru || 'Expert') : (language === 'uz' ? 'Ekspert' : language === 'ru' ? '\u042d\u043a\u0441\u043f\u0435\u0440\u0442' : 'Expert')}
+                </p>
+                <div className="text-sm text-gray-600 space-y-2">
+                  {expert ? (
+                    <p>{expert.description?.[language] || expert.description?.uz || expert.description?.ru}</p>
+                  ) : (
+                    <>
+                      <p>
+                        {language === 'uz' && 'Uskuna va ehtiyot qismlar narxini hamda yetkazib berish xarajatlarini hisoblab beraman.'}
+                        {language === 'ru' && '\u0420\u0430\u0441\u0441\u0447\u0438\u0442\u0430\u044e \u0441\u0442\u043e\u0438\u043c\u043e\u0441\u0442\u044c \u043e\u0431\u043e\u0440\u0443\u0434\u043e\u0432\u0430\u043d\u0438\u044f \u0438 \u0437\u0430\u043f\u0447\u0430\u0441\u0442\u0435\u0439.'}
+                        {language === 'en' && 'I will calculate the cost of equipment and spare parts, as well as delivery costs.'}
+                      </p>
+                      <p>
+                        {language === 'uz' && 'Sizni qaysi turdagi ehtiyot qismi qiziqtiryapti?'}
+                        {language === 'ru' && '\u041a\u0430\u043a\u043e\u0439 \u0442\u0438\u043f \u0437\u0430\u043f\u0447\u0430\u0441\u0442\u0435\u0439 \u0432\u0430\u0441 \u0438\u043d\u0442\u0435\u0440\u0435\u0441\u0443\u0435\u0442?'}
+                        {language === 'en' && 'What type of spare parts are you interested in?'}
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="md:col-span-2 bg-white rounded-2xl p-6 md:p-8 shadow-sm">
-            <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
-              <div className="flex flex-col gap-4 md:gap-6">
+            <div className="md:col-span-2 bg-white rounded-2xl p-6 md:p-8 shadow-sm">
+              <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
+                <div className="flex flex-col gap-4 md:gap-6">
+                  <div>
+                    <label className="block text-gray-700 mb-2 text-sm md:text-base">
+                      {language === 'uz' && 'Ismingiz'}
+                      {language === 'ru' && 'Ваше имя'}
+                      {language === 'en' && 'Your name'}
+                    </label>
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-gray-700 mb-2 text-sm md:text-base">
+                      {language === 'uz' && '*Telefon nomeringiz'}
+                      {language === 'ru' && '*Ваш телефон'}
+                      {language === 'en' && '*Your phone'}
+                    </label>
+                    <input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
+                      pattern="^(\+998[0-9]{9}|[0-9]{9})$"
+                      placeholder="+998901234567"
+                      title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
+                      className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
+                      required
+                    />
+                  </div>
+                </div>
+
                 <div>
-                  <label className="block text-gray-700 mb-2 text-sm md:text-base">
-                    {language === 'uz' && 'Ismingiz'}
-                    {language === 'ru' && 'Ваше имя'}
-                    {language === 'en' && 'Your name'}
+                  <label className="block text-gray-700 mb-2">
+                    {language === 'uz' && '*Tovar turi, Modeli'}
+                    {language === 'ru' && '*Тип товара, Модель'}
+                    {language === 'en' && '*Product type, Model'}
                   </label>
                   <input
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
+                    value={productModel}
+                    onChange={(e) => setProductModel(e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-gray-700 mb-2 text-sm md:text-base">
-                    {language === 'uz' && '*Telefon nomeringiz'}
-                    {language === 'ru' && '*Ваш телефон'}
-                    {language === 'en' && '*Your phone'}
+                  <label className="block text-gray-700 mb-2">
+                    {language === 'uz' && 'Izoh qoldirish'}
+                    {language === 'ru' && 'Оставить комментарий'}
+                    {language === 'en' && 'Leave a comment'}
                   </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/[^0-9+]/g, ''))}
-                    pattern="^(\+998[0-9]{9}|[0-9]{9})$"
-                    placeholder="+998901234567"
-                    title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm md:text-base focus:outline-none focus:border-[#3563e9]"
-                    required
+                  <textarea
+                    value={comment}
+                    onChange={(e) => setComment(e.target.value)}
+                    rows="4"
+                    className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label className="block text-gray-700 mb-2">
-                  {language === 'uz' && '*Tovar turi, Modeli'}
-                  {language === 'ru' && '*Тип товара, Модель'}
-                  {language === 'en' && '*Product type, Model'}
-                </label>
-                <input
-                  type="text"
-                  value={productModel}
-                  onChange={(e) => setProductModel(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-gray-700 mb-2">
-                  {language === 'uz' && 'Izoh qoldirish'}
-                  {language === 'ru' && 'Оставить комментарий'}
-                  {language === 'en' && 'Leave a comment'}
-                </label>
-                <textarea
-                  value={comment}
-                  onChange={(e) => setComment(e.target.value)}
-                  rows="4"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-                />
-              </div>
-
-              {submitted ? (
-                <div className="w-full bg-green-50 border border-green-200 rounded-xl py-4 text-center text-green-700 font-semibold">
-                  {language === 'uz' ? 'Arizangiz qabul qilindi!' : language === 'ru' ? 'Заявка принята!' : 'Request received!'}
-                </div>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-[#10b981] text-white py-4 rounded-xl font-semibold text-lg hover:bg-[#059669] transition-colors shadow-lg disabled:opacity-60"
-                >
-                  {submitting ? '...' : language === 'uz' ? 'Konsultatsiya olish' : language === 'ru' ? 'Получить консультацию' : 'Get consultation'}
-                </button>
-              )}
-            </form>
+                {submitted ? (
+                  <div className="w-full bg-green-50 border border-green-200 rounded-xl py-4 text-center text-green-700 font-semibold">
+                    {language === 'uz' ? 'Arizangiz qabul qilindi!' : language === 'ru' ? 'Заявка принята!' : 'Request received!'}
+                  </div>
+                ) : (
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-[#10b981] text-white py-4 rounded-xl font-semibold text-lg hover:bg-[#059669] transition-colors shadow-lg disabled:opacity-60"
+                  >
+                    {submitting ? '...' : language === 'uz' ? 'Konsultatsiya olish' : language === 'ru' ? 'Получить консультацию' : 'Get consultation'}
+                  </button>
+                )}
+              </form>
+            </div>
           </div>
         </div>
+      </div>
 
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20 py-6 md:py-12">
         <div className="mb-16">
           <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-[#1e3d69] mb-6 md:mb-8 uppercase border-b-4 border-[#3563e9] inline-block pb-2">
             {language === 'uz' && 'FILIALLARIMIZ'}

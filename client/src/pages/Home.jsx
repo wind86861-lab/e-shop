@@ -311,20 +311,13 @@ export default function Home() {
         <p className="text-gray-600 mb-6 md:mb-12 max-w-3xl text-sm md:text-base">
           {showcase.description?.[language] || showcase.description?.uz || "Sertifikatlangan sanoat ehtiyot qismlari, professional maslahat va barqaror ta'minot xizmati."}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-8">
           {visibleShowcase.map((img, i) => (
-            <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-lg" data-aos="zoom-in" data-aos-delay={i * 200}>
-              <img src={img} alt="" className="w-full h-[300px] object-contain bg-white" />
+            <div key={i} data-aos="zoom-in" data-aos-delay={i * 200}>
+              <img src={img} alt="" className="w-full h-[300px] object-contain" />
             </div>
           ))}
         </div>
-        {showcasePages > 0 && (
-          <div className="flex justify-center gap-3">
-            {Array.from({ length: showcasePages }).map((_, i) => (
-              <button key={i} onClick={() => setShowcaseSlide(i)} className={`w-3 h-3 rounded-full transition-colors ${i === showcaseSlide ? 'bg-[#3563e9]' : 'bg-gray-300'}`} />
-            ))}
-          </div>
-        )}
       </section>
 
       {/* BRANCHES */}

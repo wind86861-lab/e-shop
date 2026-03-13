@@ -122,38 +122,67 @@ export default function CustomOrder() {
       <div className="w-full bg-[#EFF3FD] py-6 md:py-12">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 md:px-10 lg:px-20">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-            <div className="space-y-4">
-              <input
-                type="text"
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                placeholder={language === 'uz' ? 'Ismingiz' : language === 'ru' ? 'Ваше имя' : 'Your name'}
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-              />
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={e => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9+]/g, '') })}
-                pattern="^(\+998[0-9]{9}|[0-9]{9})$"
-                placeholder="+998901234567"
-                title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-              />
-              <input
-                type="text"
-                value={formData.productName}
-                onChange={e => setFormData({ ...formData, productName: e.target.value })}
-                placeholder="* Tovar nomi, Modeli"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-              />
-              <input
-                type="number"
-                min="1"
-                value={formData.quantity}
-                onChange={e => setFormData({ ...formData, quantity: e.target.value })}
-                placeholder="*Mahsulot miqdori"
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9]"
-              />
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm space-y-5">
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 text-sm md:text-base">
+                  {language === 'uz' && 'Ismingiz'}
+                  {language === 'ru' && 'Ваше имя'}
+                  {language === 'en' && 'Your name'}
+                </label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  placeholder={language === 'uz' ? 'Ismingizni kiriting' : language === 'ru' ? 'Введите ваше имя' : 'Enter your name'}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9] focus:ring-2 focus:ring-[#3563e9]/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 text-sm md:text-base">
+                  <span className="text-red-500">*</span> {language === 'uz' && 'Telefon nomeringiz'}
+                  {language === 'ru' && 'Ваш телефон'}
+                  {language === 'en' && 'Your phone'}
+                </label>
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9+]/g, '') })}
+                  pattern="^(\+998[0-9]{9}|[0-9]{9})$"
+                  placeholder="+998 90 123 45 67"
+                  title="Enter valid phone: +998XXXXXXXXX or XXXXXXXXX"
+                  required
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9] focus:ring-2 focus:ring-[#3563e9]/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 text-sm md:text-base">
+                  <span className="text-red-500">*</span> {language === 'uz' && 'Tovar nomi, Modeli'}
+                  {language === 'ru' && 'Название товара, Модель'}
+                  {language === 'en' && 'Product name, Model'}
+                </label>
+                <input
+                  type="text"
+                  value={formData.productName}
+                  onChange={e => setFormData({ ...formData, productName: e.target.value })}
+                  placeholder={language === 'uz' ? 'Masalan: Silindr ISO 6432' : language === 'ru' ? 'Например: Цилиндр ISO 6432' : 'e.g. Cylinder ISO 6432'}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9] focus:ring-2 focus:ring-[#3563e9]/20 transition-all"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-medium mb-2 text-sm md:text-base">
+                  <span className="text-red-500">*</span> {language === 'uz' && 'Mahsulot miqdori'}
+                  {language === 'ru' && 'Количество товара'}
+                  {language === 'en' && 'Product quantity'}
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  value={formData.quantity}
+                  onChange={e => setFormData({ ...formData, quantity: e.target.value })}
+                  placeholder={language === 'uz' ? 'Miqdorni kiriting' : language === 'ru' ? 'Введите количество' : 'Enter quantity'}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-[#3563e9] focus:ring-2 focus:ring-[#3563e9]/20 transition-all"
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-4">

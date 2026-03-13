@@ -18,7 +18,7 @@ export default function BlogDetail() {
     if (id) {
       blogsAPI.getById(id).then(res => setBlog(res.data)).catch(() => { })
       blogsAPI.getAll({ published: 'true', limit: 3 }).then(res => setRelatedBlogs(res.data?.blogs || [])).catch(() => { })
-      window.scrollTo({ top: 0, behavior: 'smooth' })
+      setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 100)
     }
   }, [id])
 
@@ -95,7 +95,12 @@ export default function BlogDetail() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {relatedBlogs.map((blogItem) => (
-              <Link key={blogItem._id} to={`/blog/${blogItem._id}`} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow block">
+              <Link
+                key={blogItem._id}
+                to={`/blog/${blogItem._id}`}
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow block"
+              >
                 <div className="h-48 bg-gray-50 flex items-center justify-center">
                   {blogItem.image
                     ? <img src={blogItem.image} alt={blogItem.title?.[language]} className="w-full h-full object-cover" />

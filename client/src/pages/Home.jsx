@@ -507,17 +507,17 @@ export default function Home() {
                 style={{ transform: `translateX(-${partnerSlide * 100}%)` }}
               >
                 {Array.from({ length: partnerPages }).map((_, pageIdx) => (
-                  <div key={pageIdx} className="w-full flex-shrink-0 flex flex-wrap justify-center gap-4 md:gap-5">
+                  <div key={pageIdx} className="w-full flex-shrink-0 flex flex-wrap justify-center items-start gap-4 md:gap-5">
                     {partnerItems.slice(pageIdx * PARTNERS_PER_PAGE, pageIdx * PARTNERS_PER_PAGE + PARTNERS_PER_PAGE).map((partner, i) => (
-                      <div key={i} className="w-[calc(50%-8px)] sm:w-[calc(33.333%-12px)] lg:w-[calc(20%-16px)] min-h-[200px] md:min-h-[230px] flex flex-col items-center justify-center gap-4 px-4 py-5 md:px-6 md:py-8 rounded-2xl border border-gray-100 hover:border-[#8a7dff]/40 hover:shadow-lg transition-all group bg-white">
-                        <div className="w-full h-28 md:h-32 flex items-center justify-center">
+                      <div key={i} className="w-[calc(50%-8px)] sm:w-[calc(33.333%-12px)] lg:w-[calc(20%-16px)] flex flex-col items-center justify-between gap-3 px-4 py-5 rounded-2xl border border-gray-100 hover:border-[#8a7dff]/40 hover:shadow-lg transition-all group bg-white">
+                        <div className="w-full h-24 flex items-center justify-center">
                           {partner.logo
-                            ? <img src={partner.logo} alt={partner.name || ''} className="max-h-24 md:max-h-28 max-w-[80%] object-contain group-hover:scale-105 transition-transform duration-300" />
-                            : <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-bold">{(partner.name || '?').charAt(0)}</div>
+                            ? <img src={partner.logo} alt={partner.name || ''} className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-300" />
+                            : <div className="w-14 h-14 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 text-lg font-bold">{(partner.name || '?').charAt(0)}</div>
                           }
                         </div>
                         {partner.name && (
-                          <p className="text-[11px] md:text-xs uppercase tracking-wide text-[#49566f] text-center font-medium line-clamp-2 min-h-[28px]">{partner.name}</p>
+                          <p className="text-[11px] md:text-xs uppercase tracking-wide text-[#49566f] text-center font-medium line-clamp-2">{partner.name}</p>
                         )}
                       </div>
                     ))}

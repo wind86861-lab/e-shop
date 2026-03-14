@@ -503,7 +503,7 @@ export default function Catalog() {
                 </div>
                 <div className="flex flex-col justify-between gap-4">
                   <div>
-                    <label className="block text-gray-700 mb-2 text-sm">{language === 'uz' ? 'Mahsulot rasmini yuklang (Ixtiyoriy)' : language === 'ru' ? 'Фото товара (Необязательно)' : 'Product image (Optional)'}</label>
+                    <label className="block text-gray-700 mb-2 text-sm"><span className="text-red-500">*</span> {language === 'uz' ? 'Mahsulot rasmini yuklang (Majburiy)' : language === 'ru' ? 'Фото товара (Обязательно)' : 'Product image (Required)'}</label>
                     <label className="border-2 border-dashed border-gray-300 rounded-xl h-[140px] flex flex-col items-center justify-center bg-gray-50 cursor-pointer hover:border-[#3563e9] transition-all overflow-hidden relative group">
                       <input type="file" accept="image/*" className="hidden" onChange={async e => {
                         const file = e.target.files[0]
@@ -531,10 +531,10 @@ export default function Catalog() {
                     </label>
                   </div>
                   <button
-                    disabled={catOrderSubmitting || !catOrderForm.name || !catOrderForm.phone || !catOrderForm.productName || !catOrderForm.quantity}
+                    disabled={catOrderSubmitting || !catOrderForm.name || !catOrderForm.phone || !catOrderForm.productName || !catOrderForm.quantity || !catOrderImage}
                     onClick={async () => {
-                      if (!catOrderForm.name || !catOrderForm.phone || !catOrderForm.productName || !catOrderForm.quantity) {
-                        alert(language === 'uz' ? 'Iltimos, barcha maydonlarni to\'ldiring' : language === 'ru' ? 'Заполните все поля' : 'Fill all required fields')
+                      if (!catOrderForm.name || !catOrderForm.phone || !catOrderForm.productName || !catOrderForm.quantity || !catOrderImage) {
+                        alert(language === 'uz' ? 'Iltimos, barcha maydonlarni to\'ldiring va rasm yuklang' : language === 'ru' ? 'Заполните все поля и загрузите фото' : 'Fill all required fields and upload an image')
                         return
                       }
                       setCatOrderSubmitting(true)

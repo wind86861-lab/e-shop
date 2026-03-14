@@ -400,7 +400,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             <div>
-              <label className="block text-gray-700 mb-2 text-sm">{language === 'uz' ? 'Mahsulot rasmini yuklang (Ixtiyoriy)' : language === 'ru' ? 'Фото товара (Необязательно)' : 'Product image (Optional)'}</label>
+              <label className="block text-gray-700 mb-2 text-sm"><span className="text-red-500">*</span> {language === 'uz' ? 'Mahsulot rasmini yuklang (Majburiy)' : language === 'ru' ? 'Фото товара (Обязательно)' : 'Product image (Required)'}</label>
               <label className="border-2 border-dashed border-gray-300 rounded-xl h-[300px] flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100/50 cursor-pointer hover:border-[#3563e9] hover:bg-blue-50/30 transition-all overflow-hidden relative group">
                 <input type="file" accept="image/*" className="hidden" onChange={async (e) => {
                   const file = e.target.files[0]
@@ -435,10 +435,10 @@ export default function Home() {
               </div>
             ) : (
               <button
-                disabled={consultSubmitting || !consultForm.name || !consultForm.phone || !consultForm.productName || !consultForm.quantity}
+                disabled={consultSubmitting || !consultForm.name || !consultForm.phone || !consultForm.productName || !consultForm.quantity || !consultImage}
                 onClick={async () => {
-                  if (!consultForm.name || !consultForm.phone || !consultForm.productName || !consultForm.quantity) {
-                    alert(language === 'uz' ? 'Iltimos, barcha maydonlarni to\'ldiring' : language === 'ru' ? 'Пожалуйста, заполните все поля' : 'Please fill all required fields')
+                  if (!consultForm.name || !consultForm.phone || !consultForm.productName || !consultForm.quantity || !consultImage) {
+                    alert(language === 'uz' ? 'Iltimos, barcha maydonlarni to\'ldiring va rasm yuklang' : language === 'ru' ? 'Пожалуйста, заполните все поля и загрузите фото' : 'Please fill all required fields and upload an image')
                     return
                   }
                   const phoneRegex = /^(\+998[0-9]{9}|[0-9]{9,12})$/

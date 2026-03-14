@@ -260,10 +260,19 @@ export default function CustomOrder() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
             {topProducts.map((product) => (
               <div key={product._id} className="bg-white border border-gray-200 rounded-xl p-3 md:p-5 hover:shadow-xl transition-all group relative flex flex-col">
-                <div className="bg-gray-50 h-32 sm:h-40 lg:h-48 rounded-lg mb-3 flex items-center justify-center overflow-hidden">
+                <div className="bg-gray-50 h-32 sm:h-40 lg:h-48 rounded-lg mb-3 flex items-center justify-center overflow-hidden relative">
                   {product.images?.[0]
                     ? <img src={product.images[0]} alt={product.name?.[language]} className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                     : <Heart size={48} className="text-gray-200" />}
+                  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                    <div className="absolute inset-0 flex flex-wrap items-center justify-center gap-4 -rotate-12 scale-125 opacity-90">
+                      {[...Array(12)].map((_, i) => (
+                        <span key={i} className="text-sm md:text-base font-bold tracking-wider select-none whitespace-nowrap" style={{ color: 'rgba(30, 61, 105, 0.15)', textShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>
+                          PNEUMAX
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex-1 flex flex-col">
                   <h4 className="font-semibold text-gray-900 mb-1 text-xs sm:text-sm md:text-base line-clamp-2">{product.name?.[language] || product.name?.uz}</h4>

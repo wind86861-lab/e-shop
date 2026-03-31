@@ -329,17 +329,64 @@ export default function Catalog() {
             )}
 
             {totalPages > 1 && (
-              <div className="flex justify-center items-center gap-2 mt-12">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`w-10 h-10 flex items-center justify-center rounded-lg font-semibold ${p === page ? 'bg-[#3563e9] text-white' : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                  >
-                    {p}
-                  </button>
-                ))}
+              <div className="flex justify-center items-center gap-1 sm:gap-2 mt-12 flex-wrap">
+                <button
+                  onClick={() => setPage(Math.max(1, page - 1))}
+                  disabled={page === 1}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg font-semibold bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm sm:text-base"
+                >
+                  ←
+                </button>
+
+                {/* First page */}
+                {page > 3 && (
+                  <>
+                    <button
+                      onClick={() => setPage(1)}
+                      className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg font-semibold bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs sm:text-sm"
+                    >
+                      1
+                    </button>
+                    {page > 4 && <span className="text-gray-400 px-1">...</span>}
+                  </>
+                )}
+
+                {/* Pages around current */}
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(p => p >= page - 2 && p <= page + 2)
+                  .map(p => (
+                    <button
+                      key={p}
+                      onClick={() => setPage(p)}
+                      className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg font-semibold text-xs sm:text-sm ${p === page
+                          ? 'bg-[#3563e9] text-white'
+                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                        }`}
+                    >
+                      {p}
+                    </button>
+                  ))}
+
+                {/* Last page */}
+                {page < totalPages - 2 && (
+                  <>
+                    {page < totalPages - 3 && <span className="text-gray-400 px-1">...</span>}
+                    <button
+                      onClick={() => setPage(totalPages)}
+                      className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg font-semibold bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs sm:text-sm"
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+                )}
+
+                <button
+                  onClick={() => setPage(Math.min(totalPages, page + 1))}
+                  disabled={page === totalPages}
+                  className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg font-semibold bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed text-sm sm:text-base"
+                >
+                  →
+                </button>
               </div>
             )}
           </div>

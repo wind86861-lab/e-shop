@@ -1,57 +1,59 @@
 const express = require('express');
 const router = express.Router();
-const Service = require('../models/Service');
-const Customer = require('../models/Customer');
-const Appointment = require('../models/Appointment');
-const Inventory = require('../models/Inventory');
-const { protect } = require('../middleware/auth');
+const Order = require('../models/Order');
+const OrderItem = require('../models/OrderItem');
+const User = require('../models/User');
+const Product = require('../models/Product');
+const { protect, admin } = require('../middleware/auth');
 
-router.use(protect);
+router.use(protect, admin);
 
 router.get('/dashboard', async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
     const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const thisWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const [
-      totalCustomers,
+      totalOrders,
+      newOrders,
       totalRevenue,
       monthlyRevenue,
-      todayAppointments,
-      pendingServices,
-      lowStockItems,
-      recentServices,
+      weeklyRevenue,
+      todayRevenue,
+      totalUsers,
+      premiumUsers,
+      avgOrderValue,
     ] = await Promise.all([
-      Customer.countDocuments(),
-      Service.aggregate([
+      Order.countDocuments({ status: { $ne: 'cancelled' } }),
+      Order.countDocuments({ status: 'new' }),
+      Order.aggregate([
         { $match: { paymentStatus: 'paid' } },
-        { $group: { _id: null, total: { $sum: '$totalCost' } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } },
       ]),
-      Service.aggregate([
-        { 
-          $match: { 
-            paymentStatus: 'paid',
-            createdAt: { $gte: thisMonth }
-          } 
-        },
-        { $group: { _id: null, total: { $sum: '$totalCost' } } },
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid', createdAt: { $gte: thisMonth } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } },
       ]),
-      Appointment.countDocuments({
-        scheduledDate: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) },
-        status: { $ne: 'cancelled' },
-      }),
-      Service.countDocuments({ status: { $in: ['pending', 'in-progress'] } }),
-      Inventory.countDocuments({ $expr: { $lte: ['$quantity', '$minQuantity'] } }),
-      Service.find()
-        .populate('customer', 'firstName lastName')
-        .sort({ createdAt: -1 })
-        .limit(5),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid', createdAt: { $gte: thisWeek } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } },
+      ]),
+      Order.aggregate([
+        { $match: { paymentStatus: 'paid', createdAt: { $gte: today } } },
+        { $group: { _id: null, total: { $sum: '$totalPrice' } } },
+      ]),
+      User.countDocuments(),
+      User.countDocuments({ isPremium: true }),
+      Order.aggregate([
+        { $match: { status: { $ne: 'cancelled' } } },
+        { $group: { _id: null, avg: { $avg: '$totalPrice' } } },
+      ]),
     ]);
 
-    const revenueByMonth = await Service.aggregate([
+    // Revenue by month (current year)
+    const revenueByMonth = await Order.aggregate([
       {
         $match: {
           paymentStatus: 'paid',
@@ -61,40 +63,61 @@ router.get('/dashboard', async (req, res) => {
       {
         $group: {
           _id: { $month: '$createdAt' },
-          revenue: { $sum: '$totalCost' },
+          revenue: { $sum: '$totalPrice' },
           count: { $sum: 1 },
         },
       },
       { $sort: { _id: 1 } },
     ]);
 
-    const servicesByType = await Service.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: thisMonth },
-        },
-      },
-      {
-        $group: {
-          _id: '$serviceType',
-          count: { $sum: 1 },
-        },
-      },
+    // Top 10 products by quantity sold
+    const topProducts = await OrderItem.aggregate([
+      { $group: { _id: '$productId', name: { $first: '$name' }, totalSold: { $sum: '$quantity' }, totalRevenue: { $sum: { $multiply: ['$price', '$quantity'] } } } },
+      { $sort: { totalSold: -1 } },
+      { $limit: 10 },
+    ]);
+
+    // Orders by district
+    const ordersByDistrict = await Order.aggregate([
+      { $match: { district: { $ne: '' }, status: { $ne: 'cancelled' } } },
+      { $group: { _id: '$district', count: { $sum: 1 }, revenue: { $sum: '$totalPrice' } } },
       { $sort: { count: -1 } },
+      { $limit: 15 },
+    ]);
+
+    // Premium vs regular orders
+    const premiumOrders = await Order.countDocuments({ isPremiumOrder: true, status: { $ne: 'cancelled' } });
+    const regularOrders = totalOrders - premiumOrders;
+
+    // Orders by status
+    const ordersByStatus = await Order.aggregate([
+      { $group: { _id: '$status', count: { $sum: 1 } } },
+    ]);
+
+    // Orders by payment method
+    const ordersByPayment = await Order.aggregate([
+      { $match: { paymentMethod: { $ne: '' } } },
+      { $group: { _id: '$paymentMethod', count: { $sum: 1 } } },
     ]);
 
     res.json({
       summary: {
-        totalCustomers,
+        totalOrders,
+        newOrders,
         totalRevenue: totalRevenue[0]?.total || 0,
         monthlyRevenue: monthlyRevenue[0]?.total || 0,
-        todayAppointments,
-        pendingServices,
-        lowStockItems,
+        weeklyRevenue: weeklyRevenue[0]?.total || 0,
+        todayRevenue: todayRevenue[0]?.total || 0,
+        totalUsers,
+        premiumUsers,
+        avgOrderValue: Math.round(avgOrderValue[0]?.avg || 0),
       },
       revenueByMonth,
-      servicesByType,
-      recentServices,
+      topProducts,
+      ordersByDistrict,
+      premiumVsRegular: { premium: premiumOrders, regular: regularOrders },
+      ordersByStatus,
+      ordersByPayment,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });

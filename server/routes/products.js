@@ -5,7 +5,8 @@ const { protect, admin } = require('../middleware/auth');
 
 router.get('/', async (req, res) => {
   try {
-    const { category, parentCategory, categories, featured, active, search, page = 1, limit = 20, minPrice, maxPrice } = req.query;
+    // Stage 1: Support user_type=premium query parameter
+    const { category, parentCategory, categories, featured, active, search, page = 1, limit = 20, minPrice, maxPrice, user_type } = req.query;
     const query = {};
     if (categories) {
       const catIds = categories.split(',').filter(Boolean);
@@ -38,7 +39,22 @@ router.get('/', async (req, res) => {
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(parseInt(limit));
-    res.json({ products, total, page: parseInt(page), pages: Math.ceil(total / limit) });
+
+    // Stage 1: If user_type=premium, add premium pricing info
+    const isPremiumRequest = user_type === 'premium';
+    const productsWithPricing = products.map(p => {
+      const productObj = p.toObject();
+      if (isPremiumRequest) {
+        productObj.displayPrice = p.premiumFinalPrice;
+        productObj.isPremiumPrice = p.premiumPrice !== null && p.premiumPrice >= 0;
+      } else {
+        productObj.displayPrice = p.finalPrice;
+        productObj.isPremiumPrice = false;
+      }
+      return productObj;
+    });
+
+    res.json({ products: productsWithPricing, total, page: parseInt(page), pages: Math.ceil(total / limit), user_type: isPremiumRequest ? 'premium' : 'regular' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

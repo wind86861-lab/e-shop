@@ -1,3 +1,18 @@
+// ── Sentry must be initialised FIRST ──────────────────────────────────────────
+const Sentry = require('@sentry/node');
+if (process.env.SENTRY_DSN) {
+  Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    environment: process.env.NODE_ENV || 'development',
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
+    integrations: [
+      Sentry.httpIntegration(),
+      Sentry.expressIntegration(),
+    ],
+  });
+}
+// ─────────────────────────────────────────────────────────────────────────────
+
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -6,6 +21,8 @@ const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const path = require('path');
 const connectDB = require('./config/db');
+const { logger } = require('./config/logger');
+const { redis } = require('./config/redis');
 
 dotenv.config({ path: path.join(__dirname, '.env') });
 
@@ -18,10 +35,10 @@ app.set('trust proxy', 1);
 
 // Global process-level guards — prevent Node.js crash on unhandled errors
 process.on('uncaughtException', (err) => {
-  console.error('[FATAL] Uncaught Exception — keeping process alive:', err);
+  logger.error('[FATAL] Uncaught Exception — keeping process alive:', err);
 });
 process.on('unhandledRejection', (reason) => {
-  console.error('[FATAL] Unhandled Promise Rejection — keeping process alive:', reason);
+  logger.error('[FATAL] Unhandled Promise Rejection — keeping process alive:', reason);
 });
 
 // Security headers
@@ -90,8 +107,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // API routes
 app.use('/api/auth', authLimiter, require('./routes/auth'));
-app.use('/api/users', apiLimiter, require('./routes/users'));
-app.use('/api/notifications', apiLimiter, require('./routes/notifications'));
 app.use('/api/customers', apiLimiter, require('./routes/customers'));
 app.use('/api/appointments', apiLimiter, require('./routes/appointments'));
 app.use('/api/services', apiLimiter, require('./routes/services'));
@@ -109,8 +124,33 @@ app.use('/api/upload', apiLimiter, require('./routes/upload'));
 app.use('/api/team', apiLimiter, require('./routes/team'));
 app.use('/api/orders', apiLimiter, require('./routes/orders'));
 
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', message: 'PneuMax API is running' });
+// Stage 4: Payment provider webhooks (NO rate limiting — providers need unrestricted access)
+app.use('/api/payme', require('./routes/payme'));
+app.use('/api/click', require('./routes/click'));
+
+// Stage 1: Health check with Redis status
+app.get('/api/health', async (req, res) => {
+  try {
+    // Check Redis connection
+    const redisStatus = redis.status === 'ready' ? 'connected' : 'disconnected';
+
+    res.json({
+      status: 'OK',
+      message: 'PneuMax API is running',
+      timestamp: new Date().toISOString(),
+      services: {
+        database: 'connected',
+        redis: redisStatus,
+      },
+      environment: process.env.NODE_ENV || 'development',
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'ERROR',
+      message: 'Health check failed',
+      error: error.message,
+    });
+  }
 });
 
 // Serve built React client in production
@@ -169,8 +209,20 @@ if (isProd) {
   });
 }
 
+// Sentry error handler (captures exceptions before our own handler)
+if (process.env.SENTRY_DSN) {
+  Sentry.setupExpressErrorHandler(app);
+}
+
+// Stage 1: Error handling with logging
 app.use((err, req, res, next) => {
-  console.error('[ERROR]', err.message);
+  logger.error('[ERROR]', {
+    message: err.message,
+    stack: err.stack,
+    path: req.path,
+    method: req.method,
+    ip: req.ip,
+  });
   if (res.headersSent) return next(err);
   res.status(err.status || 500).json({
     message: 'Something went wrong!',
@@ -179,35 +231,48 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-const { initBot } = require('./bot/index');
-const mongoose = require('mongoose');
 
 connectDB();
 
-// Start bot after MongoDB connects
-if (mongoose.connection.readyState === 1) {
-  initBot();
-} else {
-  mongoose.connection.once('connected', () => {
-    initBot();
-  });
-}
-
-// Fallback: if bot hasn't started within 10s, try anyway
-setTimeout(() => {
-  if (mongoose.connection.readyState === 1) {
-    initBot();
-  }
-}, 10000);
-
 const server = app.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT} [${isProd ? 'production' : 'development'}]`);
   console.log(`Server running on port ${PORT} [${isProd ? 'production' : 'development'}]`);
+
+  // Launch Telegram bot
+  const { createBot } = require('./bot/bot');
+  const bot = createBot();
+  if (bot) {
+    bot.launch()
+      .then(() => {
+        console.log('Telegram bot launched');
+        logger.info('Telegram bot launched');
+      })
+      .catch((err) => {
+        console.error('Telegram bot launch failed:', err.message);
+        logger.error('Telegram bot launch failed', { error: err.message });
+      });
+
+    // Graceful stop on shutdown
+    process.once('SIGINT', () => bot.stop('SIGINT'));
+    process.once('SIGTERM', () => bot.stop('SIGTERM'));
+  }
 });
 
-// Graceful shutdown — let PM2 restart cleanly without dropping in-flight requests
-process.on('SIGTERM', () => {
+// Stage 1: Graceful shutdown with logging and Redis cleanup
+process.on('SIGTERM', async () => {
+  logger.info('SIGTERM received — graceful shutdown');
   console.log('SIGTERM received — graceful shutdown');
+
+  // Close Redis connection
+  try {
+    await redis.quit();
+    logger.info('Redis connection closed');
+  } catch (err) {
+    logger.error('Error closing Redis:', err);
+  }
+
   server.close(() => {
+    logger.info('HTTP server closed');
     console.log('HTTP server closed');
     process.exit(0);
   });

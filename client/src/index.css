@@ -127,6 +127,10 @@
     animation: fade-in-up 0.6s ease-out;
   }
 
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
+
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
   }

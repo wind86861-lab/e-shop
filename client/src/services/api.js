@@ -6,7 +6,7 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 second timeout
+  timeout: 30000,
 })
 
 api.interceptors.request.use((config) => {
@@ -131,11 +131,11 @@ export const pageContentAPI = {
 export const uploadAPI = {
   single: (formData) => api.post('/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 60000, // 60 second timeout for uploads
+    timeout: 60000,
   }),
   multiple: (formData) => api.post('/upload/multiple', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-    timeout: 60000, // 60 second timeout for uploads
+    timeout: 60000,
   }),
 }
 
@@ -149,24 +149,18 @@ export const teamAPI = {
 
 export const ordersAPI = {
   getAll: (params) => api.get('/orders', { params }),
+  getById: (id) => api.get(`/orders/${id}`),
   create: (data) => api.post('/orders', data),
+  createOrder: (data) => api.post('/orders/create', data),
   update: (id, data) => api.put(`/orders/${id}`, data),
+  confirm: (id, data) => api.post(`/orders/${id}/confirm`, data),
   delete: (id) => api.delete(`/orders/${id}`),
 }
 
 export const usersAPI = {
-  getAll: () => api.get('/users'),
-  getById: (id) => api.get(`/users/${id}`),
-  update: (id, data) => api.put(`/users/${id}`, data),
-  delete: (id) => api.delete(`/users/${id}`),
-}
-
-export const notificationsAPI = {
-  getAll: () => api.get('/notifications'),
-  getUnreadCount: () => api.get('/notifications/unread-count'),
-  markAsRead: (id) => api.patch(`/notifications/${id}/read`),
-  markAllAsRead: () => api.patch('/notifications/mark-all-read'),
-  delete: (id) => api.delete(`/notifications/${id}`),
+  getAll: (params) => api.get('/auth/admin/users', { params }),
+  setPremium: (id, data) => api.post(`/auth/admin/users/${id}/premium`, data),
+  broadcast: (data) => api.post('/auth/admin/broadcast', data),
 }
 
 export default api

@@ -23,6 +23,7 @@ export default function AdminProducts() {
     category: '',
     images: [],
     stock: '',
+    premiumPrice: '',
     isFeatured: false,
     isActive: true,
   })
@@ -77,6 +78,7 @@ export default function AdminProducts() {
       category: '',
       images: [],
       stock: '',
+      premiumPrice: '',
       isFeatured: false,
       isActive: true,
     })
@@ -97,6 +99,7 @@ export default function AdminProducts() {
       category: subcat?._id || subcat || '',
       images: product.images || [],
       stock: product.stock || '',
+      premiumPrice: product.premiumPrice != null ? product.premiumPrice : '',
       isFeatured: product.isFeatured || false,
       isActive: product.isActive !== false,
     })
@@ -143,6 +146,7 @@ export default function AdminProducts() {
         ...form,
         price: Number(form.price),
         discountValue: form.discountValue ? Number(form.discountValue) : null,
+        premiumPrice: form.premiumPrice !== '' ? Number(form.premiumPrice) : null,
         stock: Number(form.stock) || 0,
       }
       if (editing) {
@@ -348,10 +352,14 @@ export default function AdminProducts() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Цена</label>
                   <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Premium цена</label>
+                  <input type="number" value={form.premiumPrice} onChange={e => setForm(f => ({ ...f, premiumPrice: e.target.value }))} placeholder="Пусто = обычная" className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Склад</label>

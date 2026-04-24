@@ -33,17 +33,29 @@ router.post('/create', submitLimiter, async (req, res) => {
     const { items, customerPhone, customerName, userId, telegramId, address, district, comment } = req.body;
 
     if (!items || !items.length) {
-      return res.status(400).json({ message: 'Items are required' });
+      return res.status(400).json({ message: 'Items are required', code: 'NO_ITEMS' });
+    }
+    if (!customerName || !customerName.trim()) {
+      return res.status(400).json({ message: 'Customer name is required', code: 'NO_NAME' });
+    }
+    if (!address || !address.trim()) {
+      return res.status(400).json({ message: 'Address is required', code: 'NO_ADDRESS' });
+    }
+    if (!district || !district.trim()) {
+      return res.status(400).json({ message: 'District is required', code: 'NO_DISTRICT' });
     }
 
     // Validate all productIds are valid ObjectIds before any DB query
     const mongoose = require('mongoose');
     for (const item of items) {
-      if (!mongoose.Types.ObjectId.isValid(item.productId)) {
+      if (!item.productId || !mongoose.Types.ObjectId.isValid(item.productId)) {
         return res.status(400).json({
           message: `Invalid product ID: "${item.productId}". Please clear your cart and add products again.`,
           code: 'INVALID_PRODUCT_ID',
         });
+      }
+      if (!item.quantity || item.quantity < 1) {
+        return res.status(400).json({ message: 'Invalid quantity', code: 'INVALID_QTY' });
       }
     }
 

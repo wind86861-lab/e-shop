@@ -6,13 +6,11 @@ import { Link } from 'react-router-dom'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import { ordersAPI } from '../services/api'
-import { formatPhoneNumber, isValidUzbekPhoneNumber } from '../utils/phoneValidation'
 
 export default function Cart() {
   const { language } = useLanguage()
   const { items, removeItem, updateQty, clearCart, totalPrice } = useCart()
   const [customerName, setCustomerName] = useState('')
-  const [customerPhone, setCustomerPhone] = useState('')
   const [address, setAddress] = useState('')
   const [district, setDistrict] = useState('')
   const [comment, setComment] = useState('')
@@ -31,22 +29,17 @@ export default function Cart() {
     catalog: language === 'ru' ? 'Перейти в каталог' : language === 'en' ? 'Go to catalog' : 'Katalogga o\'tish',
     total: language === 'ru' ? 'Итого:' : language === 'en' ? 'Total:' : 'Jami:',
     namePlaceholder: language === 'ru' ? 'Ваше имя' : language === 'en' ? 'Your name' : 'Ismingiz',
-    phonePlaceholder: language === 'ru' ? 'Номер телефона *' : language === 'en' ? 'Phone number *' : 'Telefon raqamingiz *',
     commentPlaceholder: language === 'ru' ? 'Комментарий (необязательно)' : language === 'en' ? 'Comment (optional)' : 'Izoh (ixtiyoriy)',
     checkout: language === 'ru' ? 'Оформить заказ' : language === 'en' ? 'Checkout' : 'Buyurtmani rasmiylashtirish',
-    phoneRequired: language === 'ru' ? 'Введите номер телефона' : language === 'en' ? 'Enter phone number' : 'Telefon raqamini kiriting',
-    phoneInvalid: language === 'ru' ? 'Неверный формат номера. Используйте: +998 XX XXX XX XX или XX XXX XX XX' : language === 'en' ? 'Invalid phone format. Use: +998 XX XXX XX XX or XX XXX XX XX' : 'Noto\'g\'ri format. Ishlatish: +998 XX XXX XX XX yoki XX XXX XX XX',
     successTitle: language === 'ru' ? 'Заказ оформлен!' : language === 'en' ? 'Order placed!' : 'Buyurtma qabul qilindi!',
     successDesc: language === 'ru' ? 'Мы свяжемся с вами в ближайшее время.' : language === 'en' ? 'We will contact you soon.' : 'Tez orada siz bilan bog\'lanamiz.',
     newOrder: language === 'ru' ? 'Оформить новый заказ' : language === 'en' ? 'New order' : 'Yangi buyurtma',
   }
 
   const handleCheckout = async () => {
-    if (!customerName.trim()) { setError(language === 'ru' ? 'Введите имя' : 'Enter name'); return }
-    if (!customerPhone.trim()) { setError(t.phoneRequired); return }
-    if (!isValidUzbekPhoneNumber(customerPhone)) { setError(t.phoneInvalid); return }
-    if (!address.trim()) { setError(language === 'ru' ? 'Введите адрес' : 'Enter address'); return }
-    if (!district.trim()) { setError(language === 'ru' ? 'Введите район / махаллю' : 'Enter district'); return }
+    if (!customerName.trim()) { setError(language === 'ru' ? 'Введите имя' : language === 'en' ? 'Enter name' : 'Ism kiriting'); return }
+    if (!address.trim()) { setError(language === 'ru' ? 'Введите адрес' : language === 'en' ? 'Enter address' : 'Manzil kiriting'); return }
+    if (!district.trim()) { setError(language === 'ru' ? 'Введите район / махаллю' : language === 'en' ? 'Enter district' : 'Tuman kiriting'); return }
     setError('')
     setSubmitting(true)
     try {
@@ -56,7 +49,6 @@ export default function Cart() {
           quantity: i.quantity,
         })),
         customerName: customerName.trim(),
-        customerPhone: customerPhone.trim(),
         address: address.trim(),
         district: district.trim(),
         comment: comment.trim(),
@@ -67,15 +59,13 @@ export default function Cart() {
       setSubmitted(true)
     } catch (err) {
       const code = err.response?.data?.code
-      if (code === 'INVALID_PRODUCT_ID') {
-        setError(language === 'ru'
-          ? 'Корзина содержит устаревшие товары. Очистите корзину и добавьте товары заново.'
-          : language === 'en'
-            ? 'Cart contains outdated items. Please clear cart and add products again.'
-            : 'Savatda eskirgan mahsulotlar bor. Savatni tozalab, qayta qo\'shing.')
-      } else {
-        setError(language === 'ru' ? 'Ошибка при отправке. Попробуйте снова.' : 'Error. Try again.')
+      const errMap = {
+        INVALID_PRODUCT_ID: language === 'ru' ? 'Корзина содержит устаревшие товары. Очистите и добавьте заново.' : language === 'en' ? 'Cart has outdated items. Clear and re-add.' : 'Savatda eskirgan mahsulotlar. Tozalab qayta qo\'shing.',
+        NO_NAME: language === 'ru' ? 'Введите имя' : 'Enter name',
+        NO_ADDRESS: language === 'ru' ? 'Введите адрес' : 'Enter address',
+        NO_DISTRICT: language === 'ru' ? 'Введите район' : 'Enter district',
       }
+      setError(errMap[code] || (language === 'ru' ? 'Ошибка при отправке. Попробуйте снова.' : 'Error. Try again.'))
     } finally {
       setSubmitting(false)
     }
@@ -220,9 +210,16 @@ export default function Cart() {
                     <div className="relative bg-white rounded-3xl border border-dark-200/60 p-6 overflow-hidden">
                       <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/5 to-transparent rounded-bl-full" />
                       <div className="relative">
-                        <h2 className="font-bold text-dark-900 text-lg mb-5">
+                        <h2 className="font-bold text-dark-900 text-lg mb-2">
                           {language === 'ru' ? 'Оформление' : language === 'en' ? 'Checkout' : 'Buyurtma'}
                         </h2>
+                        <p className="text-xs text-dark-400 mb-4 bg-blue-50 border border-blue-100 rounded-lg px-3 py-2">
+                          📱 {language === 'ru'
+                            ? 'Номер телефона и геолокация будут запрошены в Telegram-боте.'
+                            : language === 'en'
+                              ? 'Phone number and location will be requested in Telegram bot.'
+                              : 'Telefon raqami va geolokatsiya Telegram botda so\'raladi.'}
+                        </p>
 
                         <div className="space-y-3 mb-5">
                           <div>
@@ -232,17 +229,6 @@ export default function Cart() {
                               onChange={e => setCustomerName(e.target.value)}
                               placeholder={t.namePlaceholder}
                               className="w-full border-2 border-dark-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-bold text-dark-700 mb-1.5">{t.phonePlaceholder}</label>
-                            <input
-                              type="tel"
-                              value={customerPhone}
-                              onChange={(e) => setCustomerPhone(formatPhoneNumber(e.target.value))}
-                              placeholder="+998 (__) ___-__-__"
-                              className="w-full border-2 border-dark-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-                              required
                             />
                           </div>
                           <div>

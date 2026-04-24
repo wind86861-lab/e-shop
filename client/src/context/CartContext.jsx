@@ -2,14 +2,19 @@ import { createContext, useContext, useState, useEffect } from 'react'
 
 const CartContext = createContext(null)
 
+const MONGO_ID_RE = /^[a-f\d]{24}$/i
+
+function loadCart() {
+  try {
+    const raw = JSON.parse(localStorage.getItem('cart')) || []
+    return raw.filter(i => i && i.productId && MONGO_ID_RE.test(i.productId))
+  } catch {
+    return []
+  }
+}
+
 export function CartProvider({ children }) {
-  const [items, setItems] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem('cart')) || []
-    } catch {
-      return []
-    }
-  })
+  const [items, setItems] = useState(loadCart)
 
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(items))
